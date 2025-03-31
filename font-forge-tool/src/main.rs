@@ -293,6 +293,45 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
                 ),
             ),
             GlyphEnc::new_from_parts(EncPos::None, "combCartExtNoneTok", 0, Rep::default()),
+            GlyphEnc::new_from_parts(EncPos::Pos(0x3099), "dakuten", 500, Rep::new(
+                r#"
+195 835 m 4
+ 205 845 217 850 230 850 c 4
+ 243 850 255 845 265 835 c 6
+ 405 695 l 6
+ 415 685 420 673 420 660 c 4
+ 420 647 415 635 405 625 c 4
+ 395 615 383 610 370 610 c 4
+ 357 610 345 615 335 625 c 6
+ 195 765 l 6
+ 185 775 180 787 180 800 c 4
+ 180 813 185 825 195 835 c 4
+95 755 m 4
+ 105 765 117 770 130 770 c 4
+ 143 770 155 765 165 755 c 6
+ 305 615 l 6
+ 315 605 320 593 320 580 c 4
+ 320 567 315 555 305 545 c 4
+ 295 535 283 530 270 530 c 4
+ 257 530 245 535 235 545 c 6
+ 95 685 l 6
+ 85 695 80 707 80 720 c 4
+ 80 733 85 745 95 755 c 4"#,
+                vec![],
+            )),            GlyphEnc::new_from_parts(EncPos::Pos(0x309A), "handakuten", 500, Rep::new(
+                r#"
+100 700 m 4
+ 100 783 167 850 250 850 c 4
+ 333 850 400 783 400 700 c 4
+ 400 617 333 550 250 550 c 4
+ 167 550 100 617 100 700 c 4
+250 750 m 4
+ 222 750 200 728 200 700 c 4
+ 200 672 222 650 250 650 c 4
+ 278 650 300 672 300 700 c 4
+ 300 728 278 750 250 750 c 4"#,
+                vec![],
+            )),
         ],
         LookupsMode::WordLigManual(vec![
             String::new(),
@@ -328,6 +367,8 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
             "quotesingle quotesingle quotesingle".to_string(),
             "quotesingle quotesingle quotesingle quotesingle".to_string(),
             String::new(),
+            "quotedbl".to_string(),
+            "asterisk".to_string(),
         ]),
         Cc::Participant,
         "",

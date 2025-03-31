@@ -578,6 +578,8 @@ impl GlyphFull {
             },
             Cc::Participant => if full_name.contains("Tick") {
                 format!("MultipleSubs2: \"'cc01' CART\" {full_name} combCartExtNoneTok\n")
+            } else if full_name.contains("dakuten") {
+                format!("MultipleSubs2: \"'cc01' CART\" {full_name} combCartExtHalfTok\nMultipleSubs2: \"'cc02' CONT\" {full_name} combCartExtHalfTok\n")
             } else {
                 format!("MultipleSubs2: \"'cc01' CART\" {full_name} combCartExtNoneTok\nMultipleSubs2: \"'cc02' CONT\" {full_name} combCartExtNoneTok\n")
             },
