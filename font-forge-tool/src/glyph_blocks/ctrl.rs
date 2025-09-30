@@ -1,9 +1,365 @@
-use crate::GlyphDescriptor;
+use std::borrow::Cow;
+
+use crate::*;
+
+pub const CTRL: [GlyphEnc; 36] = [
+    GlyphEnc::from_parts(EncPos::Pos(0x0000), "NUL", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0x200B), "ZWSP", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0x200C), "ZWNJ", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0x200D), "ZWJ", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0x2190), "arrowW", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0x2191), "arrowN", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0x2192), "arrowE", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0x2193), "arrowS", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0x2196), "arrowNW", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0x2197), "arrowNE", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0x2198), "arrowSE", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0x2199), "arrowSW", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(
+        EncPos::None,
+        "combCartExt1TickTok",
+        0,
+        Rep::const_new(
+            Cow::Borrowed(
+                r#"
+-500 -100 m 0
+ -472 -100 -450 -122 -450 -150 c 2
+ -450 -250 l 2
+ -450 -278 -472 -300 -500 -300 c 0
+ -528 -300 -550 -278 -550 -250 c 2
+ -550 -150 l 2
+ -550 -122 -528 -100 -500 -100 c 0"#,
+            ),
+            &[],
+        ),
+    ),
+    GlyphEnc::from_parts(
+        EncPos::None,
+        "combCartExt2TickTok",
+        0,
+        Rep::const_new(
+            Cow::Borrowed(
+                r#"
+-400 -100 m 0
+ -372 -100 -350 -122 -350 -150 c 2
+ -350 -250 l 2
+ -350 -278 -372 -300 -400 -300 c 0
+ -428 -300 -450 -278 -450 -250 c 2
+ -450 -150 l 2
+ -450 -122 -428 -100 -400 -100 c 0
+-600 -100 m 0
+ -572 -100 -550 -122 -550 -150 c 2
+ -550 -250 l 2
+ -550 -278 -572 -300 -600 -300 c 0
+ -628 -300 -650 -278 -650 -250 c 2
+ -650 -150 l 2
+ -650 -122 -628 -100 -600 -100 c 0"#,
+            ),
+            &[],
+        ),
+    ),
+    GlyphEnc::from_parts(
+        EncPos::None,
+        "combCartExt3TickTok",
+        0,
+        Rep::const_new(
+            Cow::Borrowed(
+                r#"
+-300 -100 m 0
+ -272 -100 -250 -122 -250 -150 c 2
+ -250 -250 l 2
+ -250 -278 -272 -300 -300 -300 c 0
+ -328 -300 -350 -278 -350 -250 c 2
+ -350 -150 l 2
+ -350 -122 -328 -100 -300 -100 c 0
+-500 -100 m 0
+ -472 -100 -450 -122 -450 -150 c 2
+ -450 -250 l 2
+ -450 -278 -472 -300 -500 -300 c 0
+ -528 -300 -550 -278 -550 -250 c 2
+ -550 -150 l 2
+ -550 -122 -528 -100 -500 -100 c 0
+-700 -100 m 0
+ -672 -100 -650 -122 -650 -150 c 2
+ -650 -250 l 2
+ -650 -278 -672 -300 -700 -300 c 0
+ -728 -300 -750 -278 -750 -250 c 2
+ -750 -150 l 2
+ -750 -122 -728 -100 -700 -100 c 0"#,
+            ),
+            &[],
+        ),
+    ),
+    GlyphEnc::from_parts(
+        EncPos::None,
+        "combCartExt4TickTok",
+        0,
+        Rep::const_new(
+            Cow::Borrowed(
+                r#"
+-400 -100 m 0
+ -372 -100 -350 -122 -350 -150 c 2
+ -350 -250 l 2
+ -350 -278 -372 -300 -400 -300 c 0
+ -428 -300 -450 -278 -450 -250 c 2
+ -450 -150 l 2
+ -450 -122 -428 -100 -400 -100 c 0
+-200 -100 m 0
+ -172 -100 -150 -122 -150 -150 c 2
+ -150 -250 l 2
+ -150 -278 -172 -300 -200 -300 c 0
+ -228 -300 -250 -278 -250 -250 c 2
+ -250 -150 l 2
+ -250 -122 -228 -100 -200 -100 c 0
+-600 -100 m 0
+ -572 -100 -550 -122 -550 -150 c 2
+ -550 -250 l 2
+ -550 -278 -572 -300 -600 -300 c 0
+ -628 -300 -650 -278 -650 -250 c 2
+ -650 -150 l 2
+ -650 -122 -628 -100 -600 -100 c 0
+-800 -100 m 0
+ -772 -100 -750 -122 -750 -150 c 2
+ -750 -250 l 2
+ -750 -278 -772 -300 -800 -300 c 0
+ -828 -300 -850 -278 -850 -250 c 2
+ -850 -150 l 2
+ -850 -122 -828 -100 -800 -100 c 0"#,
+            ),
+            &[],
+        ),
+    ),
+    GlyphEnc::from_parts(EncPos::Pos(0xFE00), "VAR01", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0xFE01), "VAR02", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0xFE02), "VAR03", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0xFE03), "VAR04", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0xFE04), "VAR05", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0xFE05), "VAR06", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0xFE06), "VAR07", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0xFE07), "VAR08", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0xFE08), "VAR09", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::Pos(0xE01EF), "VAR256", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(
+        EncPos::None,
+        "combCartExtHalfTok",
+        0,
+        Rep::const_new(
+            Cow::Borrowed(
+                r#"
+-550 -150 m 4
+ -550 -122 -528 -100 -500 -100 c 6
+ 0 -100 l 2
+ 28 -100 50 -122 50 -150 c 0
+ 50 -178 28 -200 0 -200 c 2
+ -500 -200 l 6
+ -528 -200 -550 -178 -550 -150 c 4
+-550 950 m 4
+ -550 978 -528 1000 -500 1000 c 6
+ 0 1000 l 2
+ 28 1000 50 978 50 950 c 0
+ 50 922 28 900 0 900 c 2
+ -500 900 l 6
+ -528 900 -550 922 -550 950 c 4"#,
+            ),
+            &[],
+        ),
+    ),
+    GlyphEnc::from_parts(
+        EncPos::None,
+        "combContExtHalfTok",
+        0,
+        Rep::const_new(
+            Cow::Borrowed(
+                r#"
+-550 -150 m 4
+ -550 -122 -528 -100 -500 -100 c 6
+ 0 -100 l 2
+ 28 -100 50 -122 50 -150 c 0
+ 50 -178 28 -200 0 -200 c 2
+ -500 -200 l 6
+ -528 -200 -550 -178 -550 -150 c 4"#,
+            ),
+            &[],
+        ),
+    ),
+    GlyphEnc::from_parts(
+        EncPos::None,
+        "combCartExt5TickTok",
+        0,
+        Rep::const_new(
+            Cow::Borrowed(
+                r#"
+-500 1100 m 4
+ -472 1100 -450 1078 -450 1050 c 6
+ -450 950 l 6
+ -450 922 -472 900 -500 900 c 4
+ -528 900 -550 922 -550 950 c 6
+ -550 1050 l 6
+ -550 1078 -528 1100 -500 1100 c 4"#,
+            ),
+            &[],
+        ),
+    ),
+    GlyphEnc::from_parts(
+        EncPos::None,
+        "combCartExt6TickTok",
+        0,
+        Rep::const_new(
+            Cow::Borrowed(
+                r#"
+-400 1100 m 4
+ -372 1100 -350 1078 -350 1050 c 6
+ -350 950 l 6
+ -350 922 -372 900 -400 900 c 4
+ -428 900 -450 922 -450 950 c 6
+ -450 1050 l 6
+ -450 1078 -428 1100 -400 1100 c 4
+-600 1100 m 4
+ -572 1100 -550 1078 -550 1050 c 6
+ -550 950 l 6
+ -550 922 -572 900 -600 900 c 4
+ -628 900 -650 922 -650 950 c 6
+ -650 1050 l 6
+ -650 1078 -628 1100 -600 1100 c 4"#,
+            ),
+            &[],
+        ),
+    ),
+    GlyphEnc::from_parts(
+        EncPos::None,
+        "combCartExt7TickTok",
+        0,
+        Rep::const_new(
+            Cow::Borrowed(
+                r#"
+-300 1100 m 4
+ -272 1100 -250 1078 -250 1050 c 6
+ -250 950 l 6
+ -250 922 -272 900 -300 900 c 4
+ -328 900 -350 922 -350 950 c 6
+ -350 1050 l 6
+ -350 1078 -328 1100 -300 1100 c 4
+-500 1100 m 4
+ -472 1100 -450 1078 -450 1050 c 6
+ -450 950 l 6
+ -450 922 -472 900 -500 900 c 4
+ -528 900 -550 922 -550 950 c 6
+ -550 1050 l 6
+ -550 1078 -528 1100 -500 1100 c 4
+-700 1100 m 4
+ -672 1100 -650 1078 -650 1050 c 6
+ -650 950 l 6
+ -650 922 -672 900 -700 900 c 4
+ -728 900 -750 922 -750 950 c 6
+ -750 1050 l 6
+ -750 1078 -728 1100 -700 1100 c 4"#,
+            ),
+            &[],
+        ),
+    ),
+    GlyphEnc::from_parts(
+        EncPos::None,
+        "combCartExt8TickTok",
+        0,
+        Rep::const_new(
+            Cow::Borrowed(
+                r#"
+-400 1100 m 4
+ -372 1100 -350 1078 -350 1050 c 6
+ -350 950 l 6
+ -350 922 -372 900 -400 900 c 4
+ -428 900 -450 922 -450 950 c 6
+ -450 1050 l 6
+ -450 1078 -428 1100 -400 1100 c 4
+-200 1100 m 4
+ -172 1100 -150 1078 -150 1050 c 6
+ -150 950 l 6
+ -150 922 -172 900 -200 900 c 4
+ -228 900 -250 922 -250 950 c 6
+ -250 1050 l 6
+ -250 1078 -228 1100 -200 1100 c 4
+-600 1100 m 4
+ -572 1100 -550 1078 -550 1050 c 6
+ -550 950 l 6
+ -550 922 -572 900 -600 900 c 4
+ -628 900 -650 922 -650 950 c 6
+ -650 1050 l 6
+ -650 1078 -628 1100 -600 1100 c 4
+-800 1100 m 4
+ -772 1100 -750 1078 -750 1050 c 6
+ -750 950 l 6
+ -750 922 -772 900 -800 900 c 4
+ -828 900 -850 922 -850 950 c 6
+ -850 1050 l 6
+ -850 1078 -828 1100 -800 1100 c 4"#,
+            ),
+            &[],
+        ),
+    ),
+    GlyphEnc::from_parts(EncPos::None, "combCartExtNoneTok", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(EncPos::None, "combContExtNoneTok", 0, Rep::const_dflt()),
+    GlyphEnc::from_parts(
+        EncPos::Pos(0x3099),
+        "dakuten",
+        500,
+        Rep::const_new(
+            Cow::Borrowed(
+                r#"
+195 835 m 4
+ 205 845 217 850 230 850 c 4
+ 243 850 255 845 265 835 c 6
+ 405 695 l 6
+ 415 685 420 673 420 660 c 4
+ 420 647 415 635 405 625 c 4
+ 395 615 383 610 370 610 c 4
+ 357 610 345 615 335 625 c 6
+ 195 765 l 6
+ 185 775 180 787 180 800 c 4
+ 180 813 185 825 195 835 c 4
+95 755 m 4
+ 105 765 117 770 130 770 c 4
+ 143 770 155 765 165 755 c 6
+ 305 615 l 6
+ 315 605 320 593 320 580 c 4
+ 320 567 315 555 305 545 c 4
+ 295 535 283 530 270 530 c 4
+ 257 530 245 535 235 545 c 6
+ 95 685 l 6
+ 85 695 80 707 80 720 c 4
+ 80 733 85 745 95 755 c 4"#,
+            ),
+            &[],
+        ),
+    ),
+    GlyphEnc::from_parts(
+        EncPos::Pos(0x309A),
+        "handakuten",
+        500,
+        Rep::const_new(
+            Cow::Borrowed(
+                r#"
+100 700 m 4
+ 100 783 167 850 250 850 c 4
+ 333 850 400 783 400 700 c 4
+ 400 617 333 550 250 550 c 4
+ 167 550 100 617 100 700 c 4
+250 750 m 4
+ 222 750 200 728 200 700 c 4
+ 200 672 222 650 250 650 c 4
+ 278 650 300 672 300 700 c 4
+ 300 728 278 750 250 750 c 4"#,
+            ),
+            &[],
+        ),
+    ),
+];
 
 //MARK: NON COMBO
-pub const TOK_CTRL: [GlyphDescriptor; 16] = [
-GlyphDescriptor::new_with_width("startCart", 500,
-r#"
+pub const TOK_CTRL: [GlyphDescriptor; 17] = [
+    GlyphDescriptor::new_with_width(
+        "startCart",
+        500,
+        r#"
 110 250 m 2
  110 58 307 -100 500 -100 c 0
  528 -100 550 -122 550 -150 c 0
@@ -15,9 +371,11 @@ r#"
  550 922 528 900 500 900 c 0
  307 900 110 742 110 550 c 2
  110 250 l 2"#,
-),
-GlyphDescriptor::new_with_width("endCart", 500,
-r#"
+    ),
+    GlyphDescriptor::new_with_width(
+        "endCart",
+        500,
+        r#"
 0 -100 m 0
  193 -100 390 58 390 250 c 2
  390 550 l 2
@@ -28,10 +386,11 @@ r#"
  490 250 l 2
  490 0 249 -200 0 -200 c 0
  -28 -200 -50 -178 -50 -150 c 0
- -50 -122 -28 -100 0 -100 c 0"#
-),
-GlyphDescriptor::new("combCartExt",
-r#"
+ -50 -122 -28 -100 0 -100 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "combCartExt",
+        r#"
 -1050 -150 m 0
  -1050 -122 -1028 -100 -1000 -100 c 2
  0 -100 l 2
@@ -45,10 +404,12 @@ r#"
  28 1000 50 978 50 950 c 0
  50 922 28 900 0 900 c 2
  -1000 900 l 2
- -1028 900 -1050 922 -1050 950 c 0"#
-),
-GlyphDescriptor::new_with_width("startLongPi", 1000,
-r#"
+ -1028 900 -1050 922 -1050 950 c 0"#,
+    ),
+    GlyphDescriptor::new_with_width(
+        "startLongPi",
+        1000,
+        r#"
 500 900 m 0
  528 900 550 878 550 850 c 2
  550 -100 l 1
@@ -58,64 +419,72 @@ r#"
  500 -200 l 2
  472 -200 450 -178 450 -150 c 2
  450 850 l 2
- 450 878 472 900 500 900 c 0"#
-),
-GlyphDescriptor::new("combLongPiExt",
-r#"
+ 450 878 472 900 500 900 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "combLongPiExt",
+        r#"
 -1050 -150 m 0
  -1050 -122 -1028 -100 -1000 -100 c 2
  0 -100 l 2
  28 -100 50 -122 50 -150 c 0
  50 -178 28 -200 0 -200 c 2
  -1000 -200 l 2
- -1028 -200 -1050 -178 -1050 -150 c 0"#
-),
-GlyphDescriptor::new("joinStack", ""),
-GlyphDescriptor::new("joinScale", ""),
-GlyphDescriptor::new("startLongGlyph",
-r#"
+ -1028 -200 -1050 -178 -1050 -150 c 0"#,
+    ),
+    GlyphDescriptor::new("joinStack", ""),
+    GlyphDescriptor::new("joinScale", ""),
+    GlyphDescriptor::new(
+        "startCont",
+        r#"
 0 -200 m 0
  -28 -200 -50 -178 -50 -150 c 0
  -50 -122 -28 -100 0 -100 c 0
  28 -100 50 -122 50 -150 c 0
- 50 -178 28 -200 0 -200 c 0"#
-),
-GlyphDescriptor::new("endLongGlyph",
-r#"
+ 50 -178 28 -200 0 -200 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "endCont",
+        r#"
 0 -200 m 0
  -28 -200 -50 -178 -50 -150 c 0
  -50 -122 -28 -100 0 -100 c 0
  28 -100 50 -122 50 -150 c 0
- 50 -178 28 -200 0 -200 c 0"#
-),
-GlyphDescriptor::new("combLongGlyphExt",
-r#"
+ 50 -178 28 -200 0 -200 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "combContExt",
+        r#"
 -1050 -150 m 0
  -1050 -122 -1028 -100 -1000 -100 c 2
  0 -100 l 2
  28 -100 50 -122 50 -150 c 0
  50 -178 28 -200 0 -200 c 2
  -1000 -200 l 2
- -1028 -200 -1050 -178 -1050 -150 c 0"#
-),
-GlyphDescriptor::new("startRevLongGlyph",
-r#"
+ -1028 -200 -1050 -178 -1050 -150 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "startRevCont",
+        r#"
 0 -200 m 0
  -28 -200 -50 -178 -50 -150 c 0
  -50 -122 -28 -100 0 -100 c 0
  28 -100 50 -122 50 -150 c 0
- 50 -178 28 -200 0 -200 c 0"#
-),
-GlyphDescriptor::new("endRevLongGlyph",
-r#"
+ 50 -178 28 -200 0 -200 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "endRevCont",
+        r#"
 0 -200 m 0
  -28 -200 -50 -178 -50 -150 c 0
  -50 -122 -28 -100 0 -100 c 0
  28 -100 50 -122 50 -150 c 0
- 50 -178 28 -200 0 -200 c 0"#
-),
-GlyphDescriptor::new_with_width("startCartAlt", 500,
-r#"
+ 50 -178 28 -200 0 -200 c 0"#,
+    ),
+    GlyphDescriptor::new_with_width(
+        "startCartAlt",
+        500,
+        r#"
 500 900 m 0
  384 900 265 804 265 691 c 2
  265 525 l 2
@@ -134,10 +503,12 @@ r#"
  165 691 l 2
  165 862 331 1000 500 1000 c 0
  528 1000 550 978 550 950 c 0
- 550 922 528 900 500 900 c 0"#
-),
-GlyphDescriptor::new_with_width("endCartAlt", 500,
-r#"
+ 550 922 528 900 500 900 c 0"#,
+    ),
+    GlyphDescriptor::new_with_width(
+        "endCartAlt",
+        500,
+        r#"
 235 691 m 2
  235 804 116 900 0 900 c 0
  -28 900 -50 922 -50 950 c 0
@@ -156,10 +527,12 @@ r#"
  235 275 l 2
  235 331 270 380 319 400 c 1
  270 420 235 469 235 525 c 2
- 235 691 l 2"#
-),
-GlyphDescriptor::new_with_width("te", 1000,
-r#"
+ 235 691 l 2"#,
+    ),
+    GlyphDescriptor::new_with_width(
+        "te",
+        1000,
+        r#"
 500 100 m 0
  472 100 450 122 450 150 c 2
  450 850 l 2
@@ -169,10 +542,12 @@ r#"
  1050 822 1028 800 1000 800 c 2
  550 800 l 1
  550 150 l 2
- 550 122 528 100 500 100 c 0"#
-),
-GlyphDescriptor::new_with_width("to", 1000,
-r#"
+ 550 122 528 100 500 100 c 0"#,
+    ),
+    GlyphDescriptor::new_with_width(
+        "to",
+        1000,
+        r#"
 500 700 m 0
  528 700 550 678 550 650 c 2
  550 -50 l 2
@@ -182,13 +557,35 @@ r#"
  -50 -22 -28 0 0 0 c 2
  450 0 l 1
  450 650 l 2
- 450 678 472 700 500 700 c 0"#
-),
+ 450 678 472 700 500 700 c 0"#,
+    ),
+    GlyphDescriptor::new_with_width(
+        "StartCartComb",
+        0,
+        r#"
+-550 -110 m 0
+ -550 -82 -528 -60 -500 -60 c 0
+ -460 -60 -457 -100 -425 -100 c 2
+ 0 -100 l 2
+ 28 -100 50 -122 50 -150 c 0
+ 50 -178 28 -200 0 -200 c 2
+ -425 -200 l 2
+ -491 -200 -550 -147 -550 -110 c 0
+-550 910 m 0
+ -550 947 -491 1000 -425 1000 c 2
+ 0 1000 l 2
+ 28 1000 50 978 50 950 c 0
+ 50 922 28 900 0 900 c 2
+ -425 900 l 2
+ -457 900 -460 860 -500 860 c 0
+ -528 860 -550 882 -550 910 c 0"#,
+    ),
 ];
 
-pub const START_LONG_GLYPH: [GlyphDescriptor; 20] = [
-GlyphDescriptor::new("aTok",
-r#"
+pub const START_CONT: [GlyphDescriptor; 20] = [
+    GlyphDescriptor::new(
+        "aTok",
+        r#"
 550 750 m 2
  550 300 l 2
  550 272 528 250 500 250 c 0
@@ -214,9 +611,10 @@ r#"
  600 55 555 100 500 100 c 0
  445 100 400 55 400 0 c 0
  400 -55 445 -100 500 -100 c 0"#,
-),
-GlyphDescriptor::new("alasaTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "alasaTok",
+        r#"
 642 350 m 1
  621 168 496 22 300 2 c 1
  300 -50 l 2
@@ -258,9 +656,10 @@ r#"
  522 578 441 679 300 697 c 1
  300 450 l 1
  541 450 l 1"#,
-),
-GlyphDescriptor::new("anuTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "anuTok",
+        r#"
 150 750 m 0
  150 777 173 800 200 800 c 0
  213 800 226 795 236 785 c 2
@@ -282,9 +681,10 @@ r#"
  450 421 l 1
  164 715 l 2
  155 725 150 737 150 750 c 0"#,
-),
-GlyphDescriptor::new("awenTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "awenTok",
+        r#"
 500 800 m 0
  522 800 542 785 548 763 c 2
  788 -100 l 1
@@ -302,9 +702,10 @@ r#"
  212 -100 l 1
  452 763 l 2
  458 785 478 800 500 800 c 0"#,
-),
-GlyphDescriptor::new("kamaTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "kamaTok",
+        r#"
 50 138 m 0
  50 166 74 188 100 188 c 0
  111 188 123 184 132 176 c 0
@@ -330,9 +731,10 @@ r#"
  390 13 371 0 350 0 c 0
  239 0 150 31 68 99 c 0
  56 109 50 124 50 138 c 0"#,
-),
-GlyphDescriptor::new("kenTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "kenTok",
+        r#"
 800 -48 m 2
  800 -50 l 2
  800 -87 813 -100 850 -100 c 2
@@ -354,9 +756,10 @@ r#"
  778 800 800 778 800 750 c 0
  800 740 797 467 524 350 c 1
  799 232 800 -43 800 -48 c 2"#,
-),
-GlyphDescriptor::new("kepekenTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "kepekenTok",
+        r#"
 107 120 m 0
  107 145 128 170 157 170 c 0
  173 170 188 162 198 148 c 2
@@ -401,9 +804,10 @@ r#"
  270 510 l 1
  450 510 l 1
  450 700 l 1"#,
-),
-GlyphDescriptor::new("laTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "laTok",
+        r#"
 337 750 m 4
  337 780 362 800 387 800 c 4
  393 800 399 798 405 796 c 4
@@ -418,9 +822,10 @@ r#"
  520 -2 563 158 563 300 c 4
  563 478 488 657 369 704 c 4
  349 712 337 730 337 750 c 4"#,
-),
-GlyphDescriptor::new("lonTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "lonTok",
+        r#"
 50 -150 m 0
  50 -122 72 -100 100 -100 c 2
  1000 -100 l 2
@@ -433,9 +838,10 @@ r#"
  459 50 425 84 425 125 c 0
  425 166 459 200 500 200 c 0
  541 200 575 166 575 125 c 0"#,
-),
-GlyphDescriptor::new("nanpaTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "nanpaTok",
+        r#"
 300 -50 m 2
  300 150 l 1
  102 150 l 2
@@ -484,9 +890,10 @@ r#"
  600 250 l 1
  600 450 l 1
  400 450 l 1"#,
-),
-GlyphDescriptor::new("openTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "openTok",
+        r#"
 200 800 m 0
  228 800 250 778 250 750 c 2
  250 350 l 1
@@ -513,9 +920,10 @@ r#"
  750 100 l 1
  750 250 l 1
  250 250 l 1"#,
-),
-GlyphDescriptor::new("piTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "piTok",
+        r#"
 550 750 m 2
  550 -50 l 2
  550 -74 556 -84 561 -89 c 0
@@ -529,9 +937,10 @@ r#"
  450 750 l 2
  450 778 472 800 500 800 c 0
  528 800 550 778 550 750 c 2"#,
-),
-GlyphDescriptor::new("piniTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "piniTok",
+        r#"
 550 700 m 1
  550 -100 l 1
  1000 -100 l 2
@@ -549,9 +958,10 @@ r#"
  728 800 750 778 750 750 c 0
  750 722 728 700 700 700 c 2
  550 700 l 1"#,
-),
-GlyphDescriptor::new("sonaTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "sonaTok",
+        r#"
 500 850 m 0
  528 850 550 828 550 800 c 2
  550 700 l 2
@@ -599,9 +1009,10 @@ r#"
  340 450 l 1
  340 100 l 1
  660 100 l 1"#,
-),
-GlyphDescriptor::new("tanTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "tanTok",
+        r#"
 1000 -200 m 0
  971 -200 850 -192 850 -50 c 2
  850 275 l 2
@@ -627,9 +1038,10 @@ r#"
  950 -87 963 -100 1000 -100 c 0
  1028 -100 1050 -122 1050 -150 c 0
  1050 -178 1028 -200 1000 -200 c 0"#,
-),
-GlyphDescriptor::new("tawaTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "tawaTok",
+        r#"
 400 800 m 0
  422 800 440 787 447 767 c 2
  756 -100 l 1
@@ -650,9 +1062,10 @@ r#"
  100 144 102 150 104 156 c 2
  354 769 l 2
  362 788 380 800 400 800 c 0"#,
-),
-GlyphDescriptor::new("wileTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "wileTok",
+        r#"
 210 775 m 0
  238 775 260 751 260 725 c 0
  260 715 257 704 250 695 c 0
@@ -686,9 +1099,10 @@ r#"
  131 35 50 210 50 399 c 0
  50 561 113 679 170 755 c 0
  180 768 195 775 210 775 c 0"#,
-),
-GlyphDescriptor::new("wileTok_VAR02",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "wileTok_VAR02",
+        r#"
 500 99 m 1
  457 48 388 0 300 0 c 0
  162 0 50 112 50 250 c 0
@@ -722,9 +1136,10 @@ r#"
  783 100 850 167 850 250 c 0
  850 285 832 331 796 385 c 0
  724 494 596 610 500 687 c 1"#,
-),
-GlyphDescriptor::new("nTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "nTok",
+        r#"
 550 750 m 2
  550 300 l 2
  550 272 528 250 500 250 c 0
@@ -749,9 +1164,10 @@ r#"
  652 -200 600 -148 600 -80 c 2
  600 0 l 2
  600 55 555 100 500 100 c 0"#,
-),
-GlyphDescriptor::new("waTok",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "waTok",
+        r#"
 500 800 m 0
  528 800 550 778 550 750 c 2
  550 300 l 2
@@ -789,15 +1205,14 @@ r#"
  284 -200 231 -94 231 22 c 0
  231 117 268 186 301 230 c 0
  311 243 326 250 341 250 c 0"#,
-),
+    ),
 ];
 
 pub const LATN: [GlyphDescriptor; 95] = [
-GlyphDescriptor::new("space",
-r#""#
-),
-GlyphDescriptor::new("exclam",
-r#"
+    GlyphDescriptor::new("space", r#""#),
+    GlyphDescriptor::new(
+        "exclam",
+        r#"
 250 58 m 0
  242 58 236 52 236 44 c 0
  236 36 242 30 250 30 c 0
@@ -815,9 +1230,10 @@ r#"
  225 178 206 198 206 222 c 2
  206 750 l 2
  206 774 225 794 250 794 c 0"#,
-),
-GlyphDescriptor::new("quotedbl",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "quotedbl",
+        r#"
 325 793 m 0
  350 793 370 773 370 749 c 2
  370 593 l 2
@@ -832,9 +1248,10 @@ r#"
  149 549 130 569 130 593 c 2
  130 749 l 2
  130 773 149 793 174 793 c 0"#,
-),
-GlyphDescriptor::new("numbersign",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "numbersign",
+        r#"
 223 360 m 2
  209 360 193 344 193 330 c 2
  193 280 l 2
@@ -893,9 +1310,10 @@ r#"
  89 448 104 464 104 478 c 2
  104 567 l 2
  104 591 124 611 149 611 c 0"#,
-),
-GlyphDescriptor::new("dollar",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "dollar",
+        r#"
 360 283 m 1
  360 105 l 1
  389 124 410 157 410 194 c 0
@@ -950,9 +1368,10 @@ r#"
  2 692 61 769 142 791 c 1
  142 802 l 2
  142 826 161 846 186 846 c 0"#,
-),
-GlyphDescriptor::new("percent",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "percent",
+        r#"
 414 219 m 0
  378 219 349 189 349 153 c 0
  349 117 378 87 414 87 c 0
@@ -982,9 +1401,10 @@ r#"
  241 555 172 487 86 487 c 0
  0 487 -70 555 -70 641 c 0
  -70 727 0 796 86 796 c 0"#,
-),
-GlyphDescriptor::new("ampersand",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "ampersand",
+        r#"
 168 346 m 1
  150 332 l 1
  114 306 93 266 93 222 c 0
@@ -1022,9 +1442,10 @@ r#"
  454 191 447 161 436 134 c 1
  486 67 l 2
  492 59 496 50 496 41 c 0"#,
-),
-GlyphDescriptor::new("quotesingle",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "quotesingle",
+        r#"
 295 595 m 2
  295 571 275 551 250 551 c 0
  225 551 206 571 206 595 c 2
@@ -1032,9 +1453,10 @@ r#"
  206 775 225 795 250 795 c 0
  275 795 295 775 295 751 c 2
  295 595 l 2"#,
-),
-GlyphDescriptor::new("parenleft",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "parenleft",
+        r#"
 326 872 m 0
  344 872 370 858 370 829 c 0
  370 812 360 797 344 787 c 0
@@ -1047,9 +1469,10 @@ r#"
  130 501 l 2
  130 648 192 801 310 869 c 0
  313 871 319 872 326 872 c 0"#,
-),
-GlyphDescriptor::new("parenright",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "parenright",
+        r#"
 130 829 m 0
  130 858 156 872 174 872 c 0
  181 872 187 871 190 869 c 0
@@ -1062,9 +1485,10 @@ r#"
  282 501 l 2
  282 620 235 737 156 787 c 0
  140 797 130 812 130 829 c 0"#,
-),
-GlyphDescriptor::new("asterisk",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "asterisk",
+        r#"
 366 477 m 0
  391 477 410 457 410 433 c 0
  410 409 391 390 366 390 c 0
@@ -1106,9 +1530,10 @@ r#"
  198 593 206 601 206 608 c 2
  206 712 l 2
  206 736 226 756 251 756 c 0"#,
-),
-GlyphDescriptor::new("plus",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "plus",
+        r#"
 251 496 m 0
  276 496 295 476 295 452 c 2
  295 348 l 2
@@ -1130,9 +1555,10 @@ r#"
  198 333 206 341 206 348 c 2
  206 452 l 2
  206 476 226 496 251 496 c 0"#,
-),
-GlyphDescriptor::new("comma",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "comma",
+        r#"
 273 62 m 0
  265 62 259 56 259 48 c 0
  259 40 265 34 273 34 c 0
@@ -1146,9 +1572,10 @@ r#"
  197 90 231 124 273 124 c 0
  315 124 349 90 349 48 c 0
  349 -38 280 -107 194 -107 c 0"#,
-),
-GlyphDescriptor::new("hyphen",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "hyphen",
+        r#"
 457 290 m 0
  457 265 437 245 413 245 c 2
  87 245 l 2
@@ -1156,9 +1583,10 @@ r#"
  43 315 63 333 87 333 c 2
  413 333 l 2
  437 333 457 315 457 290 c 0"#,
-),
-GlyphDescriptor::new("period",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "period",
+        r#"
 250 62 m 0
  242 62 236 56 236 48 c 0
  236 40 242 34 250 34 c 0
@@ -1169,9 +1597,10 @@ r#"
  326 6 292 -28 250 -28 c 0
  208 -28 174 6 174 48 c 0
  174 90 208 124 250 124 c 0"#,
-),
-GlyphDescriptor::new("slash",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "slash",
+        r#"
 454 796 m 0
  480 796 500 774 500 752 c 0
  500 745 498 737 494 730 c 2
@@ -1181,9 +1610,10 @@ r#"
  0 50 2 57 6 64 c 2
  416 774 l 2
  424 788 439 796 454 796 c 0"#,
-),
-GlyphDescriptor::new("zero",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "zero",
+        r#"
 201 295 m 0
  177 295 156 316 156 340 c 0
  156 351 160 362 169 371 c 2
@@ -1207,9 +1637,10 @@ r#"
  136 -3 44 90 43 203 c 1
  43 590 l 2
  43 703 137 795 250 795 c 0"#,
-),
-GlyphDescriptor::new("one",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "one",
+        r#"
 173 631 m 0
  173 613 182 598 182 582 c 0
  182 556 159 536 136 536 c 0
@@ -1227,9 +1658,10 @@ r#"
  206 87 l 1
  206 694 l 1
  186 680 173 657 173 631 c 0"#,
-),
-GlyphDescriptor::new("two",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "two",
+        r#"
 170 85 m 2
  413 85 l 2
  437 85 457 67 457 42 c 0
@@ -1249,9 +1681,10 @@ r#"
  321 357 230 252 140 148 c 0
  134 141 132 134 132 124 c 0
  132 103 149 85 170 85 c 2"#,
-),
-GlyphDescriptor::new("three",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "three",
+        r#"
 100 312 m 0
  127 312 145 290 145 268 c 0
  145 262 143 257 141 251 c 0
@@ -1275,9 +1708,10 @@ r#"
  457 91 364 -2 250 -2 c 0
  136 -2 43 91 43 205 c 0
  43 249 54 312 100 312 c 0"#,
-),
-GlyphDescriptor::new("four",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "four",
+        r#"
 304 705 m 2
  122 526 l 2
  110 514 103 497 103 479 c 0
@@ -1302,9 +1736,10 @@ r#"
  82 324 14 393 14 479 c 0
  14 523 33 562 60 589 c 2
  244 770 l 2"#,
-),
-GlyphDescriptor::new("five",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "five",
+        r#"
 104 315 m 0
  131 315 148 293 148 271 c 0
  148 265 147 260 145 254 c 0
@@ -1328,9 +1763,10 @@ r#"
  461 93 368 0 254 0 c 0
  140 0 47 93 47 207 c 0
  47 250 58 315 104 315 c 0"#,
-),
-GlyphDescriptor::new("six",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "six",
+        r#"
 368 205 m 0
  368 269 316 323 250 323 c 0
  187 323 132 272 132 205 c 0
@@ -1349,9 +1785,10 @@ r#"
  185 708 132 655 132 590 c 2
  132 375 l 1
  167 398 205 412 250 412 c 0"#,
-),
-GlyphDescriptor::new("seven",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "seven",
+        r#"
 44 797 m 2
  404 797 l 2
  456 797 500 754 500 702 c 0
@@ -1379,9 +1816,10 @@ r#"
  44 708 l 2
  20 708 0 728 0 753 c 0
  0 778 20 797 44 797 c 2"#,
-),
-GlyphDescriptor::new("eight",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "eight",
+        r#"
 250 353 m 0
  168 353 103 293 103 218 c 0
  103 143 168 82 250 82 c 0
@@ -1403,9 +1841,10 @@ r#"
  100 392 102 393 102 395 c 0
  102 415 14 456 14 577 c 0
  14 701 119 802 250 802 c 0"#,
-),
-GlyphDescriptor::new("nine",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "nine",
+        r#"
 250 706 m 0
  185 706 132 653 132 588 c 0
  132 523 185 470 250 470 c 0
@@ -1422,9 +1861,10 @@ r#"
  457 547 445 507 424 475 c 2
  124 17 l 2
  116 4 102 -3 88 -3 c 0"#,
-),
-GlyphDescriptor::new("colon",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "colon",
+        r#"
 250 89 m 0
  242 89 236 83 236 75 c 0
  236 67 242 62 250 62 c 0
@@ -1445,9 +1885,10 @@ r#"
  326 386 292 352 250 352 c 0
  208 352 174 386 174 428 c 0
  174 470 208 504 250 504 c 0"#,
-),
-GlyphDescriptor::new("semicolon",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "semicolon",
+        r#"
 273 88 m 0
  265 88 259 83 259 75 c 0
  259 67 265 61 273 61 c 0
@@ -1471,9 +1912,10 @@ r#"
  349 384 315 350 273 350 c 0
  231 350 197 384 197 426 c 0
  197 468 231 502 273 502 c 0"#,
-),
-GlyphDescriptor::new("less",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "less",
+        r#"
 456 41 m 0
  456 17 435 -4 411 -4 c 0
  400 -4 389 0 380 9 c 2
@@ -1489,9 +1931,10 @@ r#"
  133 386 137 377 144 370 c 2
  443 71 l 2
  451 63 456 52 456 41 c 0"#,
-),
-GlyphDescriptor::new("equal",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "equal",
+        r#"
 87 230 m 2
  413 230 l 2
  437 230 457 212 457 187 c 0
@@ -1506,9 +1949,10 @@ r#"
  87 323 l 2
  63 323 43 343 43 368 c 0
  43 393 63 411 87 411 c 2"#,
-),
-GlyphDescriptor::new("greater",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "greater",
+        r#"
 88 -4 m 0
  64 -4 44 17 44 41 c 0
  44 52 49 63 57 71 c 2
@@ -1524,9 +1968,10 @@ r#"
  456 362 441 330 418 307 c 2
  119 9 l 2
  110 0 99 -4 88 -4 c 0"#,
-),
-GlyphDescriptor::new("question",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "question",
+        r#"
 249 56 m 0
  241 56 235 50 235 42 c 0
  235 34 241 29 249 29 c 0
@@ -1554,9 +1999,10 @@ r#"
  132 573 135 557 141 543 c 0
  143 537 145 531 145 525 c 0
  145 503 127 482 100 482 c 0"#,
-),
-GlyphDescriptor::new("at",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "at",
+        r#"
 291 410 m 0
  291 455 272 490 249 490 c 0
  226 490 208 454 208 410 c 0
@@ -1586,9 +2032,10 @@ r#"
  120 -2 13 177 13 397 c 0
  13 617 120 796 250 796 c 0
  380 796 487 617 487 397 c 0"#,
-),
-GlyphDescriptor::new("A",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "A",
+        r#"
 250 708 m 0
  139 708 129 578 123 414 c 1
  377 414 l 1
@@ -1605,9 +2052,10 @@ r#"
  123 21 103 1 78 1 c 0
  53 1 34 21 34 45 c 2
  34 398 l 2"#,
-),
-GlyphDescriptor::new("B",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "B",
+        r#"
 258 87 m 1
  329 88 378 143 378 205 c 0
  378 270 325 323 260 323 c 2
@@ -1634,9 +2082,10 @@ r#"
  162 -2 l 2
  92 -2 34 54 34 124 c 2
  34 669 l 2"#,
-),
-GlyphDescriptor::new("C",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "C",
+        r#"
 487 653 m 0
  487 631 469 609 444 609 c 0
  430 609 416 616 407 628 c 2
@@ -1653,9 +2102,10 @@ r#"
  13 617 126 797 289 797 c 0
  394 797 451 722 480 677 c 0
  485 670 487 661 487 653 c 0"#,
-),
-GlyphDescriptor::new("D",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "D",
+        r#"
 114 127 m 2
  114 111 123 87 157 87 c 2
  180 87 l 2
@@ -1672,9 +2122,10 @@ r#"
  83 -2 25 53 25 122 c 2
  25 681 l 2
  25 744 86 797 152 797 c 2"#,
-),
-GlyphDescriptor::new("E",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "E",
+        r#"
 160 798 m 2
  424 798 l 2
  448 798 468 779 468 754 c 0
@@ -1695,9 +2146,10 @@ r#"
  91 0 32 54 32 123 c 2
  32 683 l 2
  32 746 94 798 160 798 c 2"#,
-),
-GlyphDescriptor::new("F",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "F",
+        r#"
 160 795 m 2
  424 795 l 2
  448 795 468 776 468 751 c 0
@@ -1714,9 +2166,10 @@ r#"
  51 -3 32 17 32 41 c 2
  32 680 l 2
  32 743 94 795 160 795 c 2"#,
-),
-GlyphDescriptor::new("G",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "G",
+        r#"
 476 653 m 0
  476 631 456 608 432 608 c 0
  406 608 391 638 374 655 c 0
@@ -1735,9 +2188,10 @@ r#"
  22 617 95 797 258 797 c 0
  341 797 417 749 469 676 c 0
  474 669 476 661 476 653 c 0"#,
-),
-GlyphDescriptor::new("H",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "H",
+        r#"
 78 796 m 0
  103 796 123 776 123 752 c 2
  123 432 l 2
@@ -1759,9 +2213,10 @@ r#"
  53 -1 34 19 34 43 c 2
  34 752 l 2
  34 776 53 796 78 796 c 0"#,
-),
-GlyphDescriptor::new("I",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "I",
+        r#"
 162 796 m 2
  338 796 l 2
  362 796 382 777 382 752 c 0
@@ -1783,9 +2238,10 @@ r#"
  162 708 l 2
  138 708 118 727 118 752 c 0
  118 777 138 796 162 796 c 2"#,
-),
-GlyphDescriptor::new("J",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "J",
+        r#"
 105 206 m 0
  105 141 138 88 203 88 c 0
  268 88 321 141 321 206 c 2
@@ -1802,9 +2258,10 @@ r#"
  89 -1 16 92 16 206 c 0
  16 230 35 250 60 250 c 0
  85 250 105 230 105 206 c 0"#,
-),
-GlyphDescriptor::new("K",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "K",
+        r#"
 480 44 m 0
  480 20 460 -1 436 -1 c 0
  425 -1 414 3 405 12 c 1
@@ -1829,9 +2286,10 @@ r#"
  237 390 240 384 243 379 c 2
  467 75 l 1
  475 67 480 55 480 44 c 0"#,
-),
-GlyphDescriptor::new("L",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "L",
+        r#"
 162 -4 m 2
  92 -4 34 52 34 123 c 2
  34 750 l 2
@@ -1843,9 +2301,10 @@ r#"
  446 84 466 65 466 40 c 0
  466 15 446 -4 422 -4 c 2
  162 -4 l 2"#,
-),
-GlyphDescriptor::new("M",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "M",
+        r#"
 438 795 m 0
  457 795 492 775 492 751 c 2
  492 43 l 2
@@ -1870,9 +2329,10 @@ r#"
  256 438 268 441 275 460 c 1
  349 717 l 2
  363 763 398 795 438 795 c 0"#,
-),
-GlyphDescriptor::new("N",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "N",
+        r#"
 87 795 m 0
  147 795 196 754 210 698 c 1
  359 177 l 2
@@ -1890,9 +2350,10 @@ r#"
  62 -1 43 19 43 43 c 2
  43 751 l 2
  43 775 62 795 87 795 c 0"#,
-),
-GlyphDescriptor::new("O",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "O",
+        r#"
 250 708 m 0
  136 708 123 568 123 397 c 0
  123 226 136 86 250 86 c 0
@@ -1903,9 +2364,10 @@ r#"
  466 177 413 -2 250 -2 c 0
  87 -2 34 177 34 397 c 0
  34 617 87 796 250 796 c 0"#,
-),
-GlyphDescriptor::new("P",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "P",
+        r#"
 170 706 m 2
  149 706 132 689 132 668 c 2
  132 486 l 2
@@ -1924,9 +2386,10 @@ r#"
  43 676 l 2
  43 741 100 795 166 795 c 2
  250 795 l 1"#,
-),
-GlyphDescriptor::new("Q",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "Q",
+        r#"
 250 797 m 0
  380 797 487 617 487 397 c 0
  487 289 462 192 420 120 c 1
@@ -1947,9 +2410,10 @@ r#"
  285 87 318 108 345 143 c 1
  340 155 330 164 318 164 c 0
  299 164 283 183 283 208 c 0"#,
-),
-GlyphDescriptor::new("R",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "R",
+        r#"
 170 706 m 2
  149 706 131 689 131 668 c 2
  131 486 l 2
@@ -1978,9 +2442,10 @@ r#"
  253 353 254 344 258 338 c 2
  450 69 l 2
  455 61 458 53 458 44 c 0"#,
-),
-GlyphDescriptor::new("S",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "S",
+        r#"
 228 0 m 2
  101 0 42 102 42 201 c 2
  42 207 l 2
@@ -2006,9 +2471,10 @@ r#"
  440 328 478 266 478 194 c 0
  478 88 415 0 310 0 c 2
  228 0 l 2"#,
-),
-GlyphDescriptor::new("T",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "T",
+        r#"
 87 795 m 2
  413 795 l 2
  437 795 457 776 457 751 c 0
@@ -2023,9 +2489,10 @@ r#"
  87 707 l 2
  63 707 43 726 43 751 c 0
  43 776 63 795 87 795 c 2"#,
-),
-GlyphDescriptor::new("U",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "U",
+        r#"
 250 -2 m 0
  86 -2 34 179 34 395 c 2
  34 752 l 2
@@ -2039,9 +2506,10 @@ r#"
  447 796 466 776 466 752 c 2
  466 395 l 1
  465 175 413 -2 250 -2 c 0"#,
-),
-GlyphDescriptor::new("V",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "V",
+        r#"
 424 797 m 0
  451 797 468 775 468 753 c 0
  468 749 467 745 466 741 c 2
@@ -2057,9 +2525,10 @@ r#"
  265 86 280 94 288 117 c 1
  382 764 l 1
  387 784 404 797 424 797 c 0"#,
-),
-GlyphDescriptor::new("W",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "W",
+        r#"
 175 -2 m 0
  77 -2 35 77 35 174 c 2
  35 752 l 2
@@ -2083,9 +2552,10 @@ r#"
  465 77 422 -2 324 -2 c 0
  284 -2 282 13 250 46 c 1
  218 13 215 -2 175 -2 c 0"#,
-),
-GlyphDescriptor::new("X",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "X",
+        r#"
 39 753 m 0
  39 775 57 797 84 797 c 0
  101 797 116 787 123 772 c 2
@@ -2113,9 +2583,10 @@ r#"
  196 404 194 412 191 418 c 2
  43 734 l 2
  40 740 39 747 39 753 c 0"#,
-),
-GlyphDescriptor::new("Y",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "Y",
+        r#"
 416 752 m 2
  416 776 432 796 452 796 c 0
  472 796 487 776 487 752 c 2
@@ -2135,9 +2606,10 @@ r#"
  84 540 159 400 250 400 c 0
  341 400 416 540 416 711 c 2
  416 752 l 2"#,
-),
-GlyphDescriptor::new("Z",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "Z",
+        r#"
 36 92 m 0
  36 109 40 124 48 138 c 2
  181 368 l 1
@@ -2166,9 +2638,10 @@ r#"
  467 17 447 -2 423 -2 c 2
  130 -2 l 2
  82 -2 36 37 36 92 c 0"#,
-),
-GlyphDescriptor::new("bracketleft",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "bracketleft",
+        r#"
 282 922 m 2
  301 922 l 2
  325 922 345 902 345 877 c 0
@@ -2184,9 +2657,10 @@ r#"
  212 -128 155 -71 155 -1 c 2
  155 795 l 2
  155 865 212 922 282 922 c 2"#,
-),
-GlyphDescriptor::new("backslash",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "backslash",
+        r#"
 500 44 m 0
  500 22 480 0 454 0 c 0
  439 0 424 7 416 21 c 2
@@ -2196,9 +2670,10 @@ r#"
  61 798 76 790 84 776 c 2
  494 66 l 2
  498 59 500 52 500 44 c 0"#,
-),
-GlyphDescriptor::new("bracketright",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "bracketright",
+        r#"
 218 922 m 2
  288 922 345 865 345 795 c 2
  345 -1 l 2
@@ -2214,9 +2689,10 @@ r#"
  175 833 155 852 155 877 c 0
  155 902 175 922 199 922 c 2
  218 922 l 2"#,
-),
-GlyphDescriptor::new("asciicircum",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "asciicircum",
+        r#"
 510 423 m 0
  510 401 492 379 466 379 c 0
  450 379 434 388 426 403 c 2
@@ -2232,9 +2708,10 @@ r#"
  295 795 336 771 358 735 c 1
  506 443 l 2
  509 437 510 430 510 423 c 0"#,
-),
-GlyphDescriptor::new("underscore",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "underscore",
+        r#"
 547 -168 m 0
  547 -193 527 -213 503 -213 c 2
  -3 -213 l 2
@@ -2242,9 +2719,10 @@ r#"
  -47 -143 -27 -124 -3 -124 c 2
  503 -124 l 2
  527 -124 547 -143 547 -168 c 0"#,
-),
-GlyphDescriptor::new("grave",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "grave",
+        r#"
 176 745 m 0
  176 767 194 789 221 789 c 0
  239 789 255 779 262 762 c 2
@@ -2254,9 +2732,10 @@ r#"
  263 557 246 567 239 584 c 2
  180 728 l 2
  178 734 176 739 176 745 c 0"#,
-),
-GlyphDescriptor::new("a",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "a",
+        r#"
 250 325 m 0
  185 325 132 271 132 206 c 0
  132 141 185 88 250 88 c 0
@@ -2272,9 +2751,10 @@ r#"
  43 320 136 413 250 413 c 0
  294 413 335 400 369 376 c 1
  372 397 389 414 412 414 c 0"#,
-),
-GlyphDescriptor::new("b",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "b",
+        r#"
 250 326 m 0
  185 326 132 273 132 208 c 0
  132 143 185 90 250 90 c 0
@@ -2291,9 +2771,10 @@ r#"
  62 1 43 21 43 45 c 2
  43 753 l 2
  43 777 62 797 87 797 c 0"#,
-),
-GlyphDescriptor::new("c",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "c",
+        r#"
 432 328 m 0
  432 300 410 281 382 281 c 0
  374 281 367 284 360 290 c 0
@@ -2309,9 +2790,10 @@ r#"
  68 321 162 414 276 414 c 0
  333 414 385 391 422 353 c 0
  429 346 432 336 432 328 c 0"#,
-),
-GlyphDescriptor::new("d",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "d",
+        r#"
 250 326 m 0
  185 326 132 273 132 208 c 0
  132 143 185 90 250 90 c 0
@@ -2328,9 +2810,10 @@ r#"
  294 415 334 401 368 378 c 1
  368 753 l 2
  368 777 387 797 412 797 c 0"#,
-),
-GlyphDescriptor::new("e",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "e",
+        r#"
 380 154 m 0
  408 154 426 124 426 107 c 0
  426 100 425 95 422 91 c 0
@@ -2349,9 +2832,10 @@ r#"
  133 142 185 89 250 89 c 0
  291 89 327 109 348 140 c 0
  351 144 364 154 380 154 c 0"#,
-),
-GlyphDescriptor::new("f",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "f",
+        r#"
 284 797 m 0
  386 797 489 718 490 590 c 0
  490 566 471 546 446 546 c 0
@@ -2373,9 +2857,10 @@ r#"
  76 411 l 1
  76 599 l 2
  76 709 173 797 284 797 c 0"#,
-),
-GlyphDescriptor::new("g",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "g",
+        r#"
 250 325 m 0
  185 325 132 272 132 207 c 0
  132 142 185 88 250 88 c 0
@@ -2396,9 +2881,10 @@ r#"
  438 414 457 394 457 370 c 2
  457 -187 l 2
  457 -297 361 -385 250 -385 c 0"#,
-),
-GlyphDescriptor::new("h",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "h",
+        r#"
 87 796 m 0
  112 796 132 776 132 752 c 2
  132 376 l 1
@@ -2415,9 +2901,10 @@ r#"
  62 -1 43 19 43 43 c 2
  43 752 l 2
  43 776 62 796 87 796 c 0"#,
-),
-GlyphDescriptor::new("i",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "i",
+        r#"
 176 414 m 2
  252 414 l 2
  274 414 294 397 294 375 c 2
@@ -2445,9 +2932,10 @@ r#"
  194 486 174 506 174 531 c 2
  174 559 l 2
  174 584 194 603 218 603 c 2"#,
-),
-GlyphDescriptor::new("j",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "j",
+        r#"
 250 -385 m 0
  162 -385 45 -322 43 -178 c 0
  43 -154 62 -134 87 -134 c 0
@@ -2472,9 +2960,10 @@ r#"
  357 487 337 506 337 531 c 2
  337 560 l 2
  337 585 357 604 381 604 c 2"#,
-),
-GlyphDescriptor::new("k",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "k",
+        r#"
 459 46 m 0
  459 21 437 2 414 2 c 0
  405 2 395 5 387 11 c 2
@@ -2496,9 +2985,10 @@ r#"
  159 305 160 302 162 300 c 2
  442 81 l 2
  453 72 459 59 459 46 c 0"#,
-),
-GlyphDescriptor::new("l",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "l",
+        r#"
 206 667 m 2
  206 700 184 709 172 709 c 2
  167 709 l 2
@@ -2512,9 +3002,10 @@ r#"
  377 17 357 -3 333 -3 c 0
  263 -3 206 54 206 124 c 2
  206 667 l 2"#,
-),
-GlyphDescriptor::new("m",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "m",
+        r#"
 78 415 m 0
  96 415 111 406 118 391 c 1
  126 407 133 414 164 414 c 0
@@ -2538,9 +3029,10 @@ r#"
  53 1 34 21 34 45 c 2
  34 371 l 2
  34 395 53 415 78 415 c 0"#,
-),
-GlyphDescriptor::new("n",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "n",
+        r#"
 87 414 m 0
  110 414 128 397 131 376 c 1
  165 400 206 413 250 413 c 0
@@ -2556,9 +3048,10 @@ r#"
  62 -1 43 19 43 43 c 2
  43 370 l 2
  43 394 62 414 87 414 c 0"#,
-),
-GlyphDescriptor::new("o",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "o",
+        r#"
 250 326 m 0
  185 326 132 273 132 208 c 0
  132 143 185 90 250 90 c 0
@@ -2569,9 +3062,10 @@ r#"
  457 94 364 1 250 1 c 0
  136 1 43 94 43 208 c 0
  43 322 136 415 250 415 c 0"#,
-),
-GlyphDescriptor::new("p",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "p",
+        r#"
 250 325 m 0
  186 325 134 275 132 212 c 1
  132 203 l 1
@@ -2589,9 +3083,10 @@ r#"
  43 393 62 413 87 413 c 0
  109 413 127 398 131 377 c 1
  165 401 206 414 250 414 c 0"#,
-),
-GlyphDescriptor::new("q",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "q",
+        r#"
 216 326 m 0
  151 326 108 273 108 208 c 0
  108 143 151 90 216 90 c 0
@@ -2613,9 +3108,10 @@ r#"
  481 -295 501 -314 501 -339 c 0
  501 -364 481 -384 457 -384 c 2
  451 -384 l 2"#,
-),
-GlyphDescriptor::new("r",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "r",
+        r#"
 442 300 m 0
  442 277 423 254 398 254 c 0
  371 254 353 284 348 289 c 0
@@ -2630,9 +3126,10 @@ r#"
  180 399 220 412 264 412 c 0
  367 412 427 338 436 324 c 0
  441 317 442 308 442 300 c 0"#,
-),
-GlyphDescriptor::new("s",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "s",
+        r#"
 412 317 m 0
  412 294 391 273 366 273 c 0
  352 273 341 279 332 291 c 0
@@ -2652,9 +3149,10 @@ r#"
  80 357 156 413 250 413 c 0
  308 413 373 390 404 342 c 0
  410 334 412 326 412 317 c 0"#,
-),
-GlyphDescriptor::new("t",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "t",
+        r#"
 288 205 m 2
  288 154 326 87 412 87 c 2
  414 87 l 2
@@ -2676,9 +3174,10 @@ r#"
  456 417 438 397 414 397 c 2
  288 397 l 1
  288 205 l 2"#,
-),
-GlyphDescriptor::new("u",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "u",
+        r#"
 413 1 m 0
  390 1 372 18 369 39 c 1
  335 15 294 1 250 1 c 0
@@ -2694,9 +3193,10 @@ r#"
  438 415 457 395 457 371 c 2
  457 45 l 2
  457 21 438 1 413 1 c 0"#,
-),
-GlyphDescriptor::new("v",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "v",
+        r#"
 10 372 m 0
  10 395 27 416 54 416 c 0
  70 416 86 407 94 392 c 1
@@ -2712,9 +3212,10 @@ r#"
  198 0 155 28 134 74 c 1
  14 352 l 2
  11 358 10 365 10 372 c 0"#,
-),
-GlyphDescriptor::new("w",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "w",
+        r#"
 250 43 m 1
  235 18 222 0 174 0 c 0
  67 0 31 86 31 193 c 2
@@ -2736,9 +3237,10 @@ r#"
  469 193 l 2
  469 86 433 0 326 0 c 0
  278 0 265 16 250 43 c 1"#,
-),
-GlyphDescriptor::new("x",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "x",
+        r#"
 41 372 m 0
  41 396 61 417 85 417 c 0
  96 417 107 413 116 404 c 2
@@ -2764,9 +3266,10 @@ r#"
  183 203 184 211 180 215 c 2
  54 341 l 2
  46 349 41 361 41 372 c 0"#,
-),
-GlyphDescriptor::new("y",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "y",
+        r#"
 369 38 m 1
  330 10 286 1 250 1 c 0
  140 1 43 91 43 196 c 0
@@ -2788,9 +3291,10 @@ r#"
  315 -295 368 -242 368 -177 c 2
  368 -173 l 1
  369 38 l 1"#,
-),
-GlyphDescriptor::new("z",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "z",
+        r#"
 86 413 m 2
  414 413 l 2
  438 413 458 394 458 369 c 0
@@ -2814,9 +3318,10 @@ r#"
  86 325 l 2
  62 325 42 344 42 369 c 0
  42 394 62 413 86 413 c 2"#,
-),
-GlyphDescriptor::new("braceleft",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "braceleft",
+        r#"
 168 383 m 2
  178 383 l 2
  248 383 305 325 305 255 c 2
@@ -2846,9 +3351,10 @@ r#"
  168 407 l 2
  161 407 156 402 156 395 c 0
  156 388 161 383 168 383 c 2"#,
-),
-GlyphDescriptor::new("bar",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "bar",
+        r#"
 250 796 m 0
  275 796 295 776 295 752 c 2
  295 43 l 2
@@ -2856,9 +3362,10 @@ r#"
  225 -1 206 19 206 43 c 2
  206 752 l 2
  206 776 225 796 250 796 c 0"#,
-),
-GlyphDescriptor::new("braceright",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "braceright",
+        r#"
 332 407 m 2
  324 407 l 2
  254 407 196 465 196 535 c 2
@@ -2888,9 +3395,10 @@ r#"
  332 383 l 2
  339 383 344 388 344 395 c 0
  344 402 339 407 332 407 c 2"#,
-),
-GlyphDescriptor::new("asciitilde",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "asciitilde",
+        r#"
 43 529 m 0
  43 593 93 657 170 657 c 0
  225 657 276 621 292 565 c 0
@@ -2906,20 +3414,22 @@ r#"
  132 521 135 514 135 506 c 0
  135 484 118 463 91 463 c 0
  57 463 43 493 43 529 c 0"#,
-),
+    ),
 ];
 
 pub const TOK_NO_COMB: [GlyphDescriptor; 10] = [
-GlyphDescriptor::new("middleDot",
-r#"
+    GlyphDescriptor::new(
+        "middleDot",
+        r#"
 600 400 m 0
  600 345 555 300 500 300 c 0
  445 300 400 345 400 400 c 0
  400 455 445 500 500 500 c 0
- 555 500 600 455 600 400 c 0"#
-),
-GlyphDescriptor::new("colon",
-r#"
+ 555 500 600 455 600 400 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "colon",
+        r#"
 500 275 m 0
  555 275 600 230 600 175 c 0
  600 120 555 75 500 75 c 0
@@ -2929,10 +3439,11 @@ r#"
  555 725 600 680 600 625 c 0
  600 570 555 525 500 525 c 0
  445 525 400 570 400 625 c 0
- 400 680 445 725 500 725 c 0"#
-),
-GlyphDescriptor::new("middleDot2",
-r#"
+ 400 680 445 725 500 725 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "middleDot2",
+        r#"
 375 400 m 0
  375 345 330 300 275 300 c 0
  220 300 175 345 175 400 c 0
@@ -2942,10 +3453,11 @@ r#"
  825 345 780 300 725 300 c 0
  670 300 625 345 625 400 c 0
  625 455 670 500 725 500 c 0
- 780 500 825 455 825 400 c 0"#
-),
-GlyphDescriptor::new("middleDot3",
-r#"
+ 780 500 825 455 825 400 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "middleDot3",
+        r#"
 250 400 m 0
  250 345 205 300 150 300 c 0
  95 300 50 345 50 400 c 0
@@ -2960,11 +3472,12 @@ r#"
  600 345 555 300 500 300 c 0
  445 300 400 345 400 400 c 0
  400 455 445 500 500 500 c 0
- 555 500 600 455 600 400 c 0"#
-),
-GlyphDescriptor::new("space", ""),
-GlyphDescriptor::new("itan",
-r#"
+ 555 500 600 455 600 400 c 0"#,
+    ),
+    GlyphDescriptor::new("space", ""),
+    GlyphDescriptor::new(
+        "itan",
+        r#"
 530 60 m 0
  489 60 455 94 455 135 c 0
  455 176 489 210 530 210 c 0
@@ -3032,9 +3545,10 @@ r#"
  320 260 342 238 342 210 c 2
  342 32 l 1
  390 11 444 0 500 0 c 0"#,
-),
-GlyphDescriptor::new("lipamanka",
-r#"
+    ),
+    GlyphDescriptor::new(
+        "lipamanka",
+        r#"
 709 371 m 0
  672 371 641 402 641 439 c 0
  641 476 672 506 709 506 c 0
@@ -3161,10 +3675,11 @@ r#"
  193 133 166 115 166 86 c 0
  166 61 171 51 177 46 c 0
  182 41 195 36 221 33 c 1
- 221 139 l 1"#
-),
-GlyphDescriptor::new("lepeka",
-r#"
+ 221 139 l 1"#,
+    ),
+    GlyphDescriptor::new(
+        "lepeka",
+        r#"
 685 688 m 0
  672 688 662 700 662 713 c 0
  662 716 662 720 664 723 c 1
@@ -3302,10 +3817,11 @@ r#"
  355 632 238 515 238 370 c 0
  238 225 355 108 500 108 c 0
  645 108 762 225 762 370 c 0
- 762 515 645 632 500 632 c 0"#
-),
-GlyphDescriptor::new("Seka",
-r#"
+ 762 515 645 632 500 632 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "Seka",
+        r#"
 789 752 m 6
  754 658 l 6
  746 635 728 625 710 625 c 4
@@ -3359,10 +3875,11 @@ r#"
  472 650 450 672 450 700 c 6
  450 800 l 6
  450 828 472 850 500 850 c 4
- 528 850 550 828 550 800 c 6"#
-),
-GlyphDescriptor::new("Linku",
-r#"
+ 528 850 550 828 550 800 c 6"#,
+    ),
+    GlyphDescriptor::new(
+        "Linku",
+        r#"
 690 450 m 4
  690 417 663 390 630 390 c 4
  597 390 570 417 570 450 c 4
@@ -3393,13 +3910,14 @@ r#"
  750 380 l 5
  750 700 l 5
  250 700 l 5
- 250 386 l 5"#
-),
+ 250 386 l 5"#,
+    ),
 ];
 
 pub const RADICALS: &[GlyphDescriptor; 29] = &[
-GlyphDescriptor::new("arrow",
-r#"
+    GlyphDescriptor::new(
+        "arrow",
+        r#"
 550 800 m 2
  550 121 l 1
  715 285 l 2
@@ -3418,10 +3936,11 @@ r#"
  450 121 l 1
  450 800 l 2
  450 828 472 850 500 850 c 0
- 528 850 550 828 550 800 c 2"#
-),
-GlyphDescriptor::new("arrowhead",
-r#"
+ 528 850 550 828 550 800 c 2"#,
+    ),
+    GlyphDescriptor::new(
+        "arrowhead",
+        r#"
 775 400 m 0
  775 385 768 372 757 362 c 2
  282 -38 l 2
@@ -3436,10 +3955,11 @@ r#"
  222 844 236 850 250 850 c 0
  261 850 273 846 282 838 c 2
  757 438 l 2
- 768 428 775 415 775 400 c 0"#
-),
-GlyphDescriptor::new("arrowheadLD",
-r#"
+ 768 428 775 415 775 400 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "arrowheadLD",
+        r#"
 865 560 m 2
  875 570 887 575 900 575 c 0
  913 575 925 570 935 560 c 0
@@ -3469,10 +3989,11 @@ r#"
  325 695 337 700 350 700 c 0
  363 700 375 695 385 685 c 0
  395 675 400 663 400 650 c 0
- 400 637 395 625 385 615 c 2"#
-),
-GlyphDescriptor::new("arrowheadUR",
-r#"
+ 400 637 395 625 385 615 c 2"#,
+    ),
+    GlyphDescriptor::new(
+        "arrowheadUR",
+        r#"
 565 240 m 2
  350 454 l 1
  135 240 l 2
@@ -3502,10 +4023,11 @@ r#"
  675 105 663 100 650 100 c 0
  637 100 625 105 615 115 c 0
  605 125 600 137 600 150 c 0
- 600 163 605 175 615 185 c 2"#
-),
-GlyphDescriptor::new("closedBox",
-r#"
+ 600 163 605 175 615 185 c 2"#,
+    ),
+    GlyphDescriptor::new(
+        "closedBox",
+        r#"
 250 700 m 1
  250 100 l 1
  750 100 l 1
@@ -3519,10 +4041,11 @@ r#"
  850 22 828 0 800 0 c 2
  200 0 l 2
  172 0 150 22 150 50 c 2
- 150 750 l 2"#
-),
-GlyphDescriptor::new("openBox",
-r#"
+ 150 750 l 2"#,
+    ),
+    GlyphDescriptor::new(
+        "openBox",
+        r#"
 200 800 m 0
  228 800 250 778 250 750 c 2
  250 100 l 1
@@ -3535,10 +4058,11 @@ r#"
  200 0 l 2
  172 0 150 22 150 50 c 2
  150 750 l 2
- 150 778 172 800 200 800 c 0"#
-),
-GlyphDescriptor::new("leftOpenBox",
-r#"
+ 150 778 172 800 200 800 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "leftOpenBox",
+        r#"
 700 50 m 0
  700 22 678 0 650 0 c 2
  350 0 l 2
@@ -3551,10 +4075,11 @@ r#"
  400 700 l 1
  400 100 l 1
  650 100 l 2
- 678 100 700 78 700 50 c 0"#
-),
-GlyphDescriptor::new("rightOpenBox",
-r#"
+ 678 100 700 78 700 50 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "rightOpenBox",
+        r#"
 300 50 m 0
  300 78 322 100 350 100 c 2
  600 100 l 1
@@ -3567,10 +4092,11 @@ r#"
  700 50 l 2
  700 22 678 0 650 0 c 2
  350 0 l 2
- 322 0 300 22 300 50 c 0"#
-),
-GlyphDescriptor::new("circle",
-r#"
+ 322 0 300 22 300 50 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "circle",
+        r#"
 500 50 m 0
  693 50 850 207 850 400 c 0
  850 593 693 750 500 750 c 0
@@ -3580,10 +4106,11 @@ r#"
  251 -50 50 151 50 400 c 0
  50 649 251 850 500 850 c 0
  749 850 950 649 950 400 c 0
- 950 151 749 -50 500 -50 c 0"#
-),
-GlyphDescriptor::new("semicircle",
-r#"
+ 950 151 749 -50 500 -50 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "semicircle",
+        r#"
 381 46 m 0
  473 83 550 225 550 400 c 0
  550 489 531 569 499 632 c 0
@@ -3596,10 +4123,11 @@ r#"
  549 45 491 -17 419 -46 c 0
  412 -49 405 -50 399 -50 c 0
  370 -50 350 -24 350 2 c 0
- 350 20 359 37 381 46 c 0"#
-),
-GlyphDescriptor::new("cross",
-r#"
+ 350 20 359 37 381 46 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "cross",
+        r#"
 185 785 m 2
  500 471 l 1
  815 785 l 2
@@ -3624,18 +4152,20 @@ r#"
  105 725 100 737 100 750 c 0
  100 763 105 775 115 785 c 0
  125 795 137 800 150 800 c 0
- 163 800 175 795 185 785 c 2"#
-),
-GlyphDescriptor::new("dot",
-r#"
+ 163 800 175 795 185 785 c 2"#,
+    ),
+    GlyphDescriptor::new(
+        "dot",
+        r#"
 600 400 m 0
  600 345 555 300 500 300 c 0
  445 300 400 345 400 400 c 0
  400 455 445 500 500 500 c 0
- 555 500 600 455 600 400 c 0"#
-),
-GlyphDescriptor::new("doubleDot",
-r#"
+ 555 500 600 455 600 400 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "doubleDot",
+        r#"
 500 75 m 0
  445 75 400 120 400 175 c 0
  400 230 445 275 500 275 c 0
@@ -3645,10 +4175,11 @@ r#"
  445 525 400 570 400 625 c 0
  400 680 445 725 500 725 c 0
  555 725 600 680 600 625 c 0
- 600 570 555 525 500 525 c 0"#
-),
-GlyphDescriptor::new("emitters",
-r#"
+ 600 570 555 525 500 525 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "emitters",
+        r#"
 793 385 m 2
  743 298 l 2
  734 282 717 273 700 273 c 0
@@ -3677,10 +4208,11 @@ r#"
  550 349 528 327 500 327 c 0
  472 327 450 349 450 377 c 2
  450 477 l 2
- 450 505 472 527 500 527 c 0"#
-),
-GlyphDescriptor::new("boxOrCrosshair",
-r#"
+ 450 505 472 527 500 527 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "boxOrCrosshair",
+        r#"
 90 450 m 2
  220 450 l 2
  248 450 270 428 270 400 c 0
@@ -3722,10 +4254,11 @@ r#"
  550 652 528 630 500 630 c 0
  472 630 450 652 450 680 c 2
  450 810 l 2
- 450 838 472 860 500 860 c 0"#
-),
-GlyphDescriptor::new("hammer",
-r#"
+ 450 838 472 860 500 860 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "hammer",
+        r#"
 450 700 m 1
  200 700 l 1
  200 450 l 1
@@ -3749,10 +4282,11 @@ r#"
  450 350 l 1
  150 350 l 2
  122 350 100 372 100 400 c 2
- 100 750 l 2"#
-),
-GlyphDescriptor::new("hand",
-r#"
+ 100 750 l 2"#,
+    ),
+    GlyphDescriptor::new(
+        "hand",
+        r#"
 600 700 m 0
  436 700 350 545 350 290 c 2
  350 0 l 2
@@ -3772,10 +4306,11 @@ r#"
  950 -28 928 -50 900 -50 c 0
  872 -50 850 -28 850 0 c 2
  850 290 l 2
- 850 423 823 700 600 700 c 0"#
-),
-GlyphDescriptor::new("pointingHand",
-r#"
+ 850 423 823 700 600 700 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "pointingHand",
+        r#"
 600 200 m 0
  600 255 555 300 500 300 c 0
  445 300 400 255 400 200 c 0
@@ -3791,10 +4326,11 @@ r#"
  455 800 459 799 464 798 c 0
  465 798 500 787 500 751 c 0
  500 745 499 739 497 732 c 0
- 490 708 443 545 417 382 c 1"#
-),
-GlyphDescriptor::new("heart",
-r#"
+ 490 708 443 545 417 382 c 1"#,
+    ),
+    GlyphDescriptor::new(
+        "heart",
+        r#"
 500 113 m 1
  551 154 850 400 850 550 c 0
  850 633 783 700 700 700 c 0
@@ -3813,10 +4349,11 @@ r#"
  481 -1 455 20 405 62 c 0
  254 188 50 388 50 550 c 0
  50 688 162 800 300 800 c 0
- 336 800 424 790 500 701 c 1"#
-),
-GlyphDescriptor::new("frowningMouth",
-r#"
+ 336 800 424 790 500 701 c 1"#,
+    ),
+    GlyphDescriptor::new(
+        "frowningMouth",
+        r#"
 500 475 m 0
  352 475 232 382 198 262 c 0
  192 240 172 225 150 225 c 0
@@ -3828,10 +4365,11 @@ r#"
  899 283 900 279 900 274 c 0
  900 245 874 226 848 226 c 0
  828 226 809 237 802 262 c 0
- 768 382 648 475 500 475 c 0"#
-),
-GlyphDescriptor::new("smilingMouth",
-r#"
+ 768 382 648 475 500 475 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "smilingMouth",
+        r#"
 500 325 m 0
  648 325 768 418 802 538 c 0
  808 560 828 575 850 575 c 0
@@ -3843,10 +4381,11 @@ r#"
  101 517 100 521 100 526 c 0
  100 555 126 574 152 574 c 0
  172 574 191 563 198 538 c 0
- 232 418 352 325 500 325 c 0"#
-),
-GlyphDescriptor::new("openMouth",
-r#"
+ 232 418 352 325 500 325 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "openMouth",
+        r#"
 234 519 m 1
  256 382 369 281 500 281 c 0
  631 281 744 382 766 519 c 1
@@ -3856,10 +4395,11 @@ r#"
  820 619 l 2
  848 619 870 597 870 569 c 0
  870 357 707 181 500 181 c 0
- 293 181 130 357 130 569 c 0"#
-),
-GlyphDescriptor::new("openTriangle",
-r#"
+ 293 181 130 357 130 569 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "openTriangle",
+        r#"
 500 775 m 0
  518 775 534 765 543 750 c 2
  933 75 l 2
@@ -3874,10 +4414,11 @@ r#"
  69 16 60 33 60 50 c 0
  60 58 62 67 67 75 c 2
  457 750 l 2
- 466 765 482 775 500 775 c 0"#
-),
-GlyphDescriptor::new("closedTriangle",
-r#"
+ 466 765 482 775 500 775 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "closedTriangle",
+        r#"
 197 100 m 1
  803 100 l 1
  500 625 l 1
@@ -3891,10 +4432,11 @@ r#"
  81 0 60 24 60 50 c 0
  60 58 62 67 67 75 c 2
  457 750 l 2
- 466 765 482 775 500 775 c 0"#
-),
-GlyphDescriptor::new("wavyLine",
-r#"
+ 466 765 482 775 500 775 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "wavyLine",
+        r#"
 810 418 m 0
  785 473 738 500 690 500 c 0
  631 500 572 461 548 385 c 0
@@ -3913,40 +4455,44 @@ r#"
  949 295 950 291 950 286 c 0
  950 256 924 238 898 238 c 0
  878 238 859 250 852 275 c 0
- 819 400 819 399 810 418 c 0"#
-),
-GlyphDescriptor::new("verticalLine",
-r#"
+ 819 400 819 399 810 418 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "verticalLine",
+        r#"
 500 -50 m 0
  472 -50 450 -28 450 0 c 2
  450 800 l 2
  450 828 472 850 500 850 c 0
  528 850 550 828 550 800 c 2
  550 0 l 2
- 550 -28 528 -50 500 -50 c 0"#
-),
-GlyphDescriptor::new("horizontalLine",
-r#"
+ 550 -28 528 -50 500 -50 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "horizontalLine",
+        r#"
 950 400 m 0
  950 372 928 350 900 350 c 2
  100 350 l 2
  72 350 50 372 50 400 c 0
  50 428 72 450 100 450 c 2
  900 450 l 2
- 928 450 950 428 950 400 c 0"#
-),
-GlyphDescriptor::new("exclamationLine",
-r#"
+ 928 450 950 428 950 400 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "exclamationLine",
+        r#"
 500 850 m 0
  528 850 550 828 550 800 c 2
  550 450 l 2
  550 422 528 400 500 400 c 0
  472 400 450 422 450 450 c 2
  450 800 l 2
- 450 828 472 850 500 850 c 0"#
-),
-GlyphDescriptor::new("comma",
-r#"
+ 450 828 472 850 500 850 c 0"#,
+    ),
+    GlyphDescriptor::new(
+        "comma",
+        r#"
 538 257 m 0
  546 248 550 236 550 225 c 0
  550 211 544 197 532 187 c 2
@@ -3957,6 +4503,6 @@ r#"
  182 14 188 28 200 38 c 2
  468 263 l 2
  477 271 489 275 500 275 c 0
- 514 275 528 269 538 257 c 0"#
-),
+ 514 275 528 269 538 257 c 0"#,
+    ),
 ];

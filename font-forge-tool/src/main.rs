@@ -1,5 +1,5 @@
 use ffir::*;
-use glyph_blocks::{*, ctrl::*, base::*, lower::*, outer::*, inner::*};
+use glyph_blocks::{base::*, ctrl::*, inner::*, lower::*, outer::*, *};
 use itertools::Itertools;
 use std::{collections::HashSet, fs::File, io::Write};
 
@@ -15,324 +15,10 @@ enum NasinNanpaVariation {
 fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
     let mut ff_pos: usize = 0;
 
-    let mut ctrl_block = GlyphBlock::new_from_enc_glyphs(
+    let ctrl_temp = CTRL;
+    let mut ctrl_block = GlyphBlock::from_const_encs(
         &mut ff_pos,
-        vec![
-            GlyphEnc::new_from_parts(EncPos::Pos(0x0000), "NUL", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0x200B), "ZWSP", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0x200C), "ZWNJ", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0x200D), "ZWJ", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0x2190), "arrowW", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0x2191), "arrowN", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0x2192), "arrowE", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0x2193), "arrowS", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0x2196), "arrowNW", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0x2197), "arrowNE", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0x2198), "arrowSE", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0x2199), "arrowSW", 0, Rep::default()),
-            GlyphEnc::new_from_parts(
-                EncPos::None,
-                "combCartExt1TickTok",
-                0,
-                Rep::new(
-                    r#"
--500 -100 m 0
- -472 -100 -450 -122 -450 -150 c 2
- -450 -250 l 2
- -450 -278 -472 -300 -500 -300 c 0
- -528 -300 -550 -278 -550 -250 c 2
- -550 -150 l 2
- -550 -122 -528 -100 -500 -100 c 0"#,
-                    vec![],
-                ),
-            ),
-            GlyphEnc::new_from_parts(
-                EncPos::None,
-                "combCartExt2TickTok",
-                0,
-                Rep::new(
-                    r#"
--400 -100 m 0
- -372 -100 -350 -122 -350 -150 c 2
- -350 -250 l 2
- -350 -278 -372 -300 -400 -300 c 0
- -428 -300 -450 -278 -450 -250 c 2
- -450 -150 l 2
- -450 -122 -428 -100 -400 -100 c 0
--600 -100 m 0
- -572 -100 -550 -122 -550 -150 c 2
- -550 -250 l 2
- -550 -278 -572 -300 -600 -300 c 0
- -628 -300 -650 -278 -650 -250 c 2
- -650 -150 l 2
- -650 -122 -628 -100 -600 -100 c 0"#,
-                    vec![],
-                ),
-            ),
-            GlyphEnc::new_from_parts(
-                EncPos::None,
-                "combCartExt3TickTok",
-                0,
-                Rep::new(
-                    r#"
--300 -100 m 0
- -272 -100 -250 -122 -250 -150 c 2
- -250 -250 l 2
- -250 -278 -272 -300 -300 -300 c 0
- -328 -300 -350 -278 -350 -250 c 2
- -350 -150 l 2
- -350 -122 -328 -100 -300 -100 c 0
--500 -100 m 0
- -472 -100 -450 -122 -450 -150 c 2
- -450 -250 l 2
- -450 -278 -472 -300 -500 -300 c 0
- -528 -300 -550 -278 -550 -250 c 2
- -550 -150 l 2
- -550 -122 -528 -100 -500 -100 c 0
--700 -100 m 0
- -672 -100 -650 -122 -650 -150 c 2
- -650 -250 l 2
- -650 -278 -672 -300 -700 -300 c 0
- -728 -300 -750 -278 -750 -250 c 2
- -750 -150 l 2
- -750 -122 -728 -100 -700 -100 c 0"#,
-                    vec![],
-                ),
-            ),
-            GlyphEnc::new_from_parts(
-                EncPos::None,
-                "combCartExt4TickTok",
-                0,
-                Rep::new(
-                    r#"
--400 -100 m 0
- -372 -100 -350 -122 -350 -150 c 2
- -350 -250 l 2
- -350 -278 -372 -300 -400 -300 c 0
- -428 -300 -450 -278 -450 -250 c 2
- -450 -150 l 2
- -450 -122 -428 -100 -400 -100 c 0
--200 -100 m 0
- -172 -100 -150 -122 -150 -150 c 2
- -150 -250 l 2
- -150 -278 -172 -300 -200 -300 c 0
- -228 -300 -250 -278 -250 -250 c 2
- -250 -150 l 2
- -250 -122 -228 -100 -200 -100 c 0
--600 -100 m 0
- -572 -100 -550 -122 -550 -150 c 2
- -550 -250 l 2
- -550 -278 -572 -300 -600 -300 c 0
- -628 -300 -650 -278 -650 -250 c 2
- -650 -150 l 2
- -650 -122 -628 -100 -600 -100 c 0
--800 -100 m 0
- -772 -100 -750 -122 -750 -150 c 2
- -750 -250 l 2
- -750 -278 -772 -300 -800 -300 c 0
- -828 -300 -850 -278 -850 -250 c 2
- -850 -150 l 2
- -850 -122 -828 -100 -800 -100 c 0"#,
-                    vec![],
-                ),
-            ),
-            GlyphEnc::new_from_parts(EncPos::Pos(0xFE00), "VAR01", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0xFE01), "VAR02", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0xFE02), "VAR03", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0xFE03), "VAR04", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0xFE04), "VAR05", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0xFE05), "VAR06", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0xFE06), "VAR07", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0xFE07), "VAR08", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0xFE08), "VAR09", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0xE01EF), "VAR256", 0, Rep::default()),
-            GlyphEnc::new_from_parts(
-                EncPos::None,
-                "combCartExtHalfTok",
-                0,
-                Rep::new(
-                    r#"
--550 -150 m 4
- -550 -122 -528 -100 -500 -100 c 6
- 0 -100 l 2
- 28 -100 50 -122 50 -150 c 0
- 50 -178 28 -200 0 -200 c 2
- -500 -200 l 6
- -528 -200 -550 -178 -550 -150 c 4
--550 950 m 4
- -550 978 -528 1000 -500 1000 c 6
- 0 1000 l 2
- 28 1000 50 978 50 950 c 0
- 50 922 28 900 0 900 c 2
- -500 900 l 6
- -528 900 -550 922 -550 950 c 4"#,
-                    vec![],
-                ),
-            ),
-            GlyphEnc::new_from_parts(
-                EncPos::None,
-                "combLongGlyphExtHalfTok",
-                0,
-                Rep::new(
-                    r#"
--550 -150 m 4
- -550 -122 -528 -100 -500 -100 c 6
- 0 -100 l 2
- 28 -100 50 -122 50 -150 c 0
- 50 -178 28 -200 0 -200 c 2
- -500 -200 l 6
- -528 -200 -550 -178 -550 -150 c 4"#,
-                    vec![],
-                ),
-            ),
-
-            GlyphEnc::new_from_parts(
-                EncPos::None,
-                "combCartExt5TickTok",
-                0,
-                Rep::new(
-                    r#"
--500 1100 m 4
- -472 1100 -450 1078 -450 1050 c 6
- -450 950 l 6
- -450 922 -472 900 -500 900 c 4
- -528 900 -550 922 -550 950 c 6
- -550 1050 l 6
- -550 1078 -528 1100 -500 1100 c 4"#,
-                    vec![],
-                ),
-            ),
-            GlyphEnc::new_from_parts(
-                EncPos::None,
-                "combCartExt6TickTok",
-                0,
-                Rep::new(
-                    r#"
--400 1100 m 4
- -372 1100 -350 1078 -350 1050 c 6
- -350 950 l 6
- -350 922 -372 900 -400 900 c 4
- -428 900 -450 922 -450 950 c 6
- -450 1050 l 6
- -450 1078 -428 1100 -400 1100 c 4
--600 1100 m 4
- -572 1100 -550 1078 -550 1050 c 6
- -550 950 l 6
- -550 922 -572 900 -600 900 c 4
- -628 900 -650 922 -650 950 c 6
- -650 1050 l 6
- -650 1078 -628 1100 -600 1100 c 4"#,
-                    vec![],
-                ),
-            ),
-            GlyphEnc::new_from_parts(
-                EncPos::None,
-                "combCartExt7TickTok",
-                0,
-                Rep::new(
-                    r#"
--300 1100 m 4
- -272 1100 -250 1078 -250 1050 c 6
- -250 950 l 6
- -250 922 -272 900 -300 900 c 4
- -328 900 -350 922 -350 950 c 6
- -350 1050 l 6
- -350 1078 -328 1100 -300 1100 c 4
--500 1100 m 4
- -472 1100 -450 1078 -450 1050 c 6
- -450 950 l 6
- -450 922 -472 900 -500 900 c 4
- -528 900 -550 922 -550 950 c 6
- -550 1050 l 6
- -550 1078 -528 1100 -500 1100 c 4
--700 1100 m 4
- -672 1100 -650 1078 -650 1050 c 6
- -650 950 l 6
- -650 922 -672 900 -700 900 c 4
- -728 900 -750 922 -750 950 c 6
- -750 1050 l 6
- -750 1078 -728 1100 -700 1100 c 4"#,
-                    vec![],
-                ),
-            ),
-            GlyphEnc::new_from_parts(
-                EncPos::None,
-                "combCartExt8TickTok",
-                0,
-                Rep::new(
-                    r#"
--400 1100 m 4
- -372 1100 -350 1078 -350 1050 c 6
- -350 950 l 6
- -350 922 -372 900 -400 900 c 4
- -428 900 -450 922 -450 950 c 6
- -450 1050 l 6
- -450 1078 -428 1100 -400 1100 c 4
--200 1100 m 4
- -172 1100 -150 1078 -150 1050 c 6
- -150 950 l 6
- -150 922 -172 900 -200 900 c 4
- -228 900 -250 922 -250 950 c 6
- -250 1050 l 6
- -250 1078 -228 1100 -200 1100 c 4
--600 1100 m 4
- -572 1100 -550 1078 -550 1050 c 6
- -550 950 l 6
- -550 922 -572 900 -600 900 c 4
- -628 900 -650 922 -650 950 c 6
- -650 1050 l 6
- -650 1078 -628 1100 -600 1100 c 4
--800 1100 m 4
- -772 1100 -750 1078 -750 1050 c 6
- -750 950 l 6
- -750 922 -772 900 -800 900 c 4
- -828 900 -850 922 -850 950 c 6
- -850 1050 l 6
- -850 1078 -828 1100 -800 1100 c 4"#,
-                    vec![],
-                ),
-            ),
-            GlyphEnc::new_from_parts(EncPos::None, "combCartExtNoneTok", 0, Rep::default()),
-            GlyphEnc::new_from_parts(EncPos::Pos(0x3099), "dakuten", 500, Rep::new(
-                r#"
-195 835 m 4
- 205 845 217 850 230 850 c 4
- 243 850 255 845 265 835 c 6
- 405 695 l 6
- 415 685 420 673 420 660 c 4
- 420 647 415 635 405 625 c 4
- 395 615 383 610 370 610 c 4
- 357 610 345 615 335 625 c 6
- 195 765 l 6
- 185 775 180 787 180 800 c 4
- 180 813 185 825 195 835 c 4
-95 755 m 4
- 105 765 117 770 130 770 c 4
- 143 770 155 765 165 755 c 6
- 305 615 l 6
- 315 605 320 593 320 580 c 4
- 320 567 315 555 305 545 c 4
- 295 535 283 530 270 530 c 4
- 257 530 245 535 235 545 c 6
- 95 685 l 6
- 85 695 80 707 80 720 c 4
- 80 733 85 745 95 755 c 4"#,
-                vec![],
-            )),            GlyphEnc::new_from_parts(EncPos::Pos(0x309A), "handakuten", 500, Rep::new(
-                r#"
-100 700 m 4
- 100 783 167 850 250 850 c 4
- 333 850 400 783 400 700 c 4
- 400 617 333 550 250 550 c 4
- 167 550 100 617 100 700 c 4
-250 750 m 4
- 222 750 200 728 200 700 c 4
- 200 672 222 650 250 650 c 4
- 278 650 300 672 300 700 c 4
- 300 728 278 750 250 750 c 4"#,
-                vec![],
-            )),
-        ],
+        &ctrl_temp,
         LookupsMode::WordLigManual(vec![
             String::new(),
             String::new(),
@@ -367,6 +53,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
             "quotesingle quotesingle quotesingle".to_string(),
             "quotesingle quotesingle quotesingle quotesingle".to_string(),
             String::new(),
+            String::new(),
             "quotedbl".to_string(),
             "asterisk".to_string(),
         ]),
@@ -377,7 +64,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
     );
     ctrl_block.glyphs[0].cc_subs = Cc::None;
 
-    let mut tok_ctrl_block = GlyphBlock::new_from_constants(
+    let mut tok_ctrl_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         TOK_CTRL.as_slice(),
         LookupsMode::WordLigManual(vec![
@@ -397,6 +84,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
             "endCartAlt".to_string(),
             "t e".to_string(),
             "t o".to_string(),
+            "ZWJ startCartTok".to_string(),
         ]),
         Cc::None,
         "",
@@ -410,21 +98,24 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
     tok_ctrl_block.glyphs[12].encoding.enc_pos = EncPos::None;
     tok_ctrl_block.glyphs[13].encoding.enc_pos = EncPos::None;
 
-    let mut start_long_glyph_block = GlyphBlock::new_from_constants(
+    tok_ctrl_block.glyphs[16].cc_subs = Cc::Participant;
+    tok_ctrl_block.glyphs[16].encoding.enc_pos = EncPos::None;
+
+    let mut start_cont_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
-        START_LONG_GLYPH.as_slice(),
-        LookupsMode::StartLongGlyph,
+        START_CONT.as_slice(),
+        LookupsMode::StartCont,
         Cc::None,
         "",
-        "_startLongGlyphTok",
+        "_startContTok",
         "aaafff",
         EncPos::None,
         1000,
     );
-    start_long_glyph_block.glyphs[7].lookups = Lookups::EndLongGlyph;
+    start_cont_block.glyphs[7].lookups = Lookups::EndCont;
 
     let latn_block = if variation == NasinNanpaVariation::Main {
-        GlyphBlock::new_from_constants(
+        GlyphBlock::from_const_descriptors(
             &mut ff_pos,
             LATN.as_slice(),
             LookupsMode::None,
@@ -439,7 +130,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         GlyphBlock::new_empty(&mut ff_pos, 0, 0)
     };
 
-    let mut no_comb_block = GlyphBlock::new_from_constants(
+    let mut no_comb_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         TOK_NO_COMB.as_slice(),
         LookupsMode::WordLigManual(vec![
@@ -465,7 +156,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
     no_comb_block.glyphs[1].encoding.enc_pos = EncPos::Pos(0xF199D);
     no_comb_block.glyphs[4].encoding.enc_pos = EncPos::Pos(0x3000);
 
-    let radicals_block = GlyphBlock::new_from_constants(
+    let radicals_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         RADICALS.as_slice(),
         LookupsMode::None,
@@ -477,7 +168,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
 
-    let base_cor_block = GlyphBlock::new_from_constants(
+    let base_cor_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         BASE_COR.as_slice(),
         if variation == NasinNanpaVariation::Main {
@@ -493,7 +184,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
 
-    let mut base_ext_block = GlyphBlock::new_from_constants(
+    let mut base_ext_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         BASE_EXT.as_slice(),
         if variation == NasinNanpaVariation::Main {
@@ -511,7 +202,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
     base_ext_block.glyphs[41].encoding.enc_pos = EncPos::None;
     base_ext_block.glyphs[42].encoding.enc_pos = EncPos::None;
 
-    let base_alt_block = GlyphBlock::new_from_constants(
+    let base_alt_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         BASE_ALT.as_slice(),
         LookupsMode::Alt,
@@ -523,7 +214,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
 
-    let outer_cor_block = GlyphBlock::new_from_constants(
+    let outer_cor_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         OUTER_COR.as_slice(),
         LookupsMode::ComboFirst,
@@ -535,7 +226,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
 
-    let outer_ext_block = GlyphBlock::new_from_constants(
+    let outer_ext_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         OUTER_EXT.as_slice(),
         LookupsMode::ComboFirst,
@@ -547,7 +238,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
 
-    let outer_alt_block = GlyphBlock::new_from_constants(
+    let outer_alt_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         OUTER_ALT.as_slice(),
         LookupsMode::ComboFirst,
@@ -559,7 +250,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
 
-    let inner_cor_block = GlyphBlock::new_from_constants(
+    let inner_cor_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         INNER_COR.as_slice(),
         LookupsMode::ComboLast,
@@ -571,7 +262,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         0,
     );
 
-    let inner_ext_block = GlyphBlock::new_from_constants(
+    let inner_ext_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         INNER_EXT.as_slice(),
         LookupsMode::ComboLast,
@@ -583,7 +274,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         0,
     );
 
-    let inner_alt_block = GlyphBlock::new_from_constants(
+    let inner_alt_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         INNER_ALT.as_slice(),
         LookupsMode::ComboLast,
@@ -595,7 +286,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         0,
     );
 
-    let lower_cor_block = GlyphBlock::new_from_constants(
+    let lower_cor_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         LOWER_COR.as_slice(),
         LookupsMode::ComboFirst,
@@ -607,7 +298,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
 
-    let lower_ext_block = GlyphBlock::new_from_constants(
+    let lower_ext_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         LOWER_EXT.as_slice(),
         LookupsMode::ComboFirst,
@@ -619,7 +310,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
 
-    let lower_alt_block = GlyphBlock::new_from_constants(
+    let lower_alt_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         LOWER_ALT.as_slice(),
         LookupsMode::ComboFirst,
@@ -631,7 +322,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
 
-    let upper_cor_block = lower_cor_block.new_from_refs(
+    let upper_cor_block = lower_cor_block.from_refs(
         &mut ff_pos,
         "S 1 0 0 1 -1000 500 2".to_string(),
         LookupsMode::ComboLast,
@@ -644,7 +335,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         Some(Anchor::new_stack(AnchorType::Mark)),
     );
 
-    let upper_ext_block = lower_ext_block.new_from_refs(
+    let upper_ext_block = lower_ext_block.from_refs(
         &mut ff_pos,
         "S 1 0 0 1 -1000 500 2".to_string(),
         LookupsMode::ComboLast,
@@ -657,7 +348,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         Some(Anchor::new_stack(AnchorType::Mark)),
     );
 
-    let upper_alt_block = lower_alt_block.new_from_refs(
+    let upper_alt_block = lower_alt_block.from_refs(
         &mut ff_pos,
         "S 1 0 0 1 -1000 500 2".to_string(),
         LookupsMode::ComboLast,
@@ -695,10 +386,8 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
             })
             .join(" ");
 
-        let prenames = (1..9)
-            .map(|x| format!("combCartExt{x}TickTok"))
-            .join(" ");
-        let prenames = format!("{prenames} endCartTok endLongGlyphTok endRevLongGlyphTok endCartAltTok teTok toTok middleDotTok colonTok middleDot2Tok middleDot3Tok");
+        let prenames = (1..9).map(|x| format!("combCartExt{x}TickTok")).join(" ");
+        let prenames = format!("{prenames} endCartTok endContTok endRevContTok endCartAltTok teTok toTok middleDotTok colonTok middleDot2Tok middleDot3Tok");
 
         let sp = put_in_class("space".to_string());
         let tok = put_in_class(format!("{prenames} {names}"));
@@ -775,7 +464,6 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
             })
             .join(" ");
 
-
         let zwj = put_in_class("ZWJ".to_string());
         let scale = put_in_class(scale_names);
         let stack = put_in_class(stack_names);
@@ -787,12 +475,24 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
     };
 
     let mut main_blocks = vec![
-        latn_block,      no_comb_block,   radicals_block,
-        base_cor_block,  base_ext_block,  base_alt_block,
-        outer_cor_block, outer_ext_block, outer_alt_block,
-        inner_cor_block, inner_ext_block, inner_alt_block,
-        lower_cor_block, lower_ext_block, lower_alt_block,
-        upper_cor_block, upper_ext_block, upper_alt_block,
+        latn_block,
+        no_comb_block,
+        radicals_block,
+        base_cor_block,
+        base_ext_block,
+        base_alt_block,
+        outer_cor_block,
+        outer_ext_block,
+        outer_alt_block,
+        inner_cor_block,
+        inner_ext_block,
+        inner_alt_block,
+        lower_cor_block,
+        lower_ext_block,
+        lower_alt_block,
+        upper_cor_block,
+        upper_ext_block,
+        upper_alt_block,
     ];
 
     let chain_calt = {
@@ -820,7 +520,9 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
                     block
                         .glyphs
                         .iter()
-                        .map(|glyph| format!("{}{}{}", block.prefix, glyph.glyph.name, block.suffix))
+                        .map(|glyph| {
+                            format!("{}{}{}", block.prefix, glyph.glyph.name, block.suffix)
+                        })
                         .join(" ")
                 })
                 .join(" ");
@@ -831,18 +533,19 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
             ))
         };
 
-        let cart = put_in_class(
-            format!("{} {} {}",
-                "combCartExtHalfTok combCartExtNoneTok",
-                (1..=8).map(|x| format!("combCartExt{}TickTok", x)).join(" "),
-                "startCartTok combCartExtTok startCartAltTok"
-            )
-        );
-                // .iter()
-                // .map(|s| format!("{}Tok", s))
+        let cart = put_in_class(format!(
+            "{} {} {}",
+            "combCartExtHalfTok combCartExtNoneTok",
+            (1..=8)
+                .map(|x| format!("combCartExt{}TickTok", x))
+                .join(" "),
+            "startCartTok combCartExtTok startCartAltTok"
+        ));
+        // .iter()
+        // .map(|s| format!("{}Tok", s))
 
-        let cont =  {
-            let longs = start_long_glyph_block
+        let cont = {
+            let longs = start_cont_block
                 .glyphs
                 .iter()
                 .filter_map(|glyph| {
@@ -851,15 +554,13 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
                     } else {
                         Some(format!(
                             "{}{}{}",
-                            start_long_glyph_block.prefix,
-                            glyph.glyph.name,
-                            start_long_glyph_block.suffix
+                            start_cont_block.prefix, glyph.glyph.name, start_cont_block.suffix
                         ))
                     }
                 })
                 .join(" ");
 
-            put_in_class(format!("combLongGlyphExtHalfTok startLongPiTok combLongPiExtTok startLongGlyphTok combLongGlyphExtTok startRevLongGlyphTok {}", longs))
+            put_in_class(format!("combContExtNoneTok combContExtHalfTok startLongPiTok combLongPiExtTok startContTok combContExtTok startRevContTok {}", longs))
         };
 
         let put_in_sub = |c: &str| format!("  {c}{base}\n  {c}{cart}\n  {c}{cont}\n");
@@ -867,7 +568,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         format!("ChainSub2: class \"'calt' CART AND CONT\" 4 4 4 2\n{subs}")
     };
 
-    let mut meta_block = vec![ctrl_block, tok_ctrl_block, start_long_glyph_block];
+    let mut meta_block = vec![ctrl_block, tok_ctrl_block, start_cont_block];
     meta_block.append(&mut main_blocks);
     let glyphs_string = format!(
         "{}",
@@ -887,8 +588,9 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
     let mut file = File::create(filename)?;
 
     // FINAL `.sfd` COMPOSITIION
-    writeln!( &mut file,
-r#"{HEADER}Version: {VERSION}
+    writeln!(
+        &mut file,
+        r#"{HEADER}Version: {VERSION}
 {DETAILS1}ModificationTime: {time}{DETAILS2}{LOOKUPS}DEI: 91125
 {space_calt}{AFTER_SPACE_CALT}{zwj_calt}{AFTER_ZWJ_CALT}{chain_calt}{AFTER_CHAIN_CALT}{VERSION}{OTHER}BeginChars: {ff_pos} {ff_pos}
 {glyphs_string}EndChars
@@ -898,6 +600,6 @@ EndSplineFont"#
 
 fn main() -> std::io::Result<()> {
     gen_nasin_nanpa(NasinNanpaVariation::Main)?;
-    gen_nasin_nanpa(NasinNanpaVariation::Ucsur)?;
+    // gen_nasin_nanpa(NasinNanpaVariation::Ucsur)?;
     Ok(())
 }

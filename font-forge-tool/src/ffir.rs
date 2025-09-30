@@ -1,11 +1,13 @@
+use std::borrow::Cow;
 use itertools::Itertools;
 
 use crate::NasinNanpaVariation;
 
 /// An encoding position (either a number, or `None` which prints `-1`)
-#[derive(Clone)]
+#[derive(Default, Clone)]
 pub enum EncPos {
     Pos(usize),
+    #[default]
     None,
 }
 
@@ -26,7 +28,7 @@ impl EncPos {
 }
 
 /// An encoding, consisting of a fontforge position and an encoding position
-#[derive(Clone)]
+#[derive(Default, Clone)]
 pub struct Encoding {
     pub ff_pos: usize,
     pub enc_pos: EncPos,
@@ -45,7 +47,7 @@ impl Encoding {
         )
     }
 
-    pub fn gen_ref(&self, position: String) -> String {
+    pub fn gen_ref<'a>(&self, position: Cow<'a, str>) -> String {
         let Encoding { ff_pos, enc_pos } = self;
         format!(
             "Refer: {ff_pos} {enc_pos} {position}",
@@ -56,18 +58,15 @@ impl Encoding {
 }
 
 /// A glyph reference (with positional data)
-#[derive(Clone)]
-pub struct Ref {
+#[derive(Default, Clone)]
+pub struct Ref<'a> {
     ref_glyph: Encoding,
-    position: String,
+    position: Cow<'a, str>,
 }
 
-impl Ref {
-    pub fn new(ref_glyph: Encoding, position: impl Into<String>) -> Self {
-        Self {
-            ref_glyph,
-            position: position.into(),
-        }
+impl<'a> Ref<'a> {
+    pub fn new(ref_glyph: Encoding, position: impl Into<Cow<'a, str>>) -> Self {
+        Self { ref_glyph, position: position.into(), }
     }
 
     pub fn gen(&self) -> String {
@@ -77,16 +76,32 @@ impl Ref {
 
 /// A glyph representation, consisting of a spline set and references
 #[derive(Default, Clone)]
-pub struct Rep {
-    spline_set: String,
-    references: Vec<Ref>,
+pub struct Rep<'a> {
+    spline_set: Cow<'a, str>,
+    references: Cow<'a, [Ref<'a>]>,
 }
 
-impl Rep {
-    pub fn new(spline_set: impl Into<String>, references: Vec<Ref>) -> Self {
-        Self {
+impl<'a> Rep<'a> {
+    pub fn new(
+        spline_set: impl Into<Cow<'a, str>>,
+        references: impl Into<Cow<'a, [Ref<'a>]>>
+    ) -> Self { Self {
             spline_set: spline_set.into(),
-            references,
+            references: references.into(),
+    } }
+
+    pub const fn const_new(
+        spline_set: Cow<'a, str>,
+        references: &'a [Ref<'a>],
+    ) -> Self { Self {
+            spline_set,
+            references: Cow::Borrowed(references),
+    } }
+
+    pub const fn const_dflt() -> Self {
+        Self {
+            spline_set: Cow::Borrowed(""),
+            references: Cow::Borrowed(&[]),
         }
     }
 
@@ -193,18 +208,28 @@ impl Anchor {
 
 /// This is the smallest building block of a glyph, containing the name, width, representation, and optional anchor
 #[derive(Clone)]
-pub struct GlyphBasic {
-    pub name: String,
+pub struct GlyphBasic<'a> {
+    pub name: Cow<'a, str>,
     pub width: usize,
-    pub rep: Rep,
+    pub rep: Rep<'a>,
     pub anchor: Option<Anchor>,
     pub anchor2: Option<Anchor>,
 }
 
-impl GlyphBasic {
-    pub fn new(name: impl Into<String>, width: usize, rep: Rep, anchor: Option<Anchor>, anchor2: Option<Anchor>) -> Self {
+impl<'a> GlyphBasic<'a> {
+    pub fn new(name: impl Into<Cow<'a, str>>, width: usize, rep: Rep<'a>, anchor: Option<Anchor>, anchor2: Option<Anchor>) -> Self {
         Self {
             name: name.into(),
+            width,
+            rep,
+            anchor,
+            anchor2,
+        }
+    }
+
+    pub const fn new_const(name: &'static str, width: usize, rep: Rep<'a>, anchor: Option<Anchor>, anchor2: Option<Anchor>) -> Self {
+        Self {
+            name: Cow::Borrowed(name),
             width,
             rep,
             anchor,
@@ -214,20 +239,20 @@ impl GlyphBasic {
 }
 
 /// This is a `GlyphBasic` that has been assigned an `EncPos`
-pub struct GlyphEnc {
-    glyph: GlyphBasic,
+pub struct GlyphEnc<'a> {
+    glyph: GlyphBasic<'a>,
     enc: EncPos,
 }
 
 #[allow(unused)]
-impl GlyphEnc {
-    pub fn new_from_basic(glyph: GlyphBasic, enc: EncPos) -> Self {
+impl<'a> GlyphEnc<'a> {
+    pub fn from_basic(glyph: GlyphBasic<'a>, enc: EncPos) -> Self {
         Self { glyph, enc }
     }
 
-    pub fn new_from_parts(enc: EncPos, name: impl Into<String>, width: usize, rep: Rep) -> Self {
+    pub const fn from_parts(enc: EncPos, name: &'static str, width: usize, rep: Rep<'a>) -> Self {
         Self {
-            glyph: GlyphBasic::new(name, width, rep, None, None),
+            glyph: GlyphBasic::new_const(name, width, rep, None, None),
             enc,
         }
     }
@@ -237,7 +262,7 @@ impl GlyphEnc {
 pub enum LookupsMode {
     WordLigFromLetters,
     WordLigManual(Vec<String>),
-    StartLongGlyph,
+    StartCont,
     Alt,
     ComboFirst,
     ComboLast,
@@ -248,8 +273,8 @@ pub enum LookupsMode {
 pub enum Lookups {
     WordLigFromLetters,
     WordLigManual(String),
-    StartLongGlyph,
-    EndLongGlyph,
+    StartCont,
+    EndCont,
     Alt,
     ComboFirst,
     ComboLast,
@@ -257,7 +282,7 @@ pub enum Lookups {
 }
 
 impl Lookups {
-    fn new_from_mode(mode: &LookupsMode, idx: usize) -> Self {
+    fn from_mode(mode: &LookupsMode, idx: usize) -> Self {
         match mode {
             LookupsMode::WordLigFromLetters => Lookups::WordLigFromLetters,
             LookupsMode::WordLigManual(vec) => {
@@ -268,7 +293,7 @@ impl Lookups {
                     Lookups::None
                 }
             }
-            LookupsMode::StartLongGlyph => Lookups::StartLongGlyph,
+            LookupsMode::StartCont => Lookups::StartCont,
             LookupsMode::Alt => Lookups::Alt,
             LookupsMode::ComboFirst => Lookups::ComboFirst,
             LookupsMode::ComboLast => Lookups::ComboLast,
@@ -349,16 +374,16 @@ impl Lookups {
                 format!("{always}{latin}")
             } // Lookups::WordLigManual
 
-            // Used in start_long_glyph_block
-            Lookups::StartLongGlyph => {
+            // Used in start_cont_block
+            Lookups::StartCont => {
                 let (glyph, joiner) = full_name.rsplit_once("_").unwrap();
                 format!("Ligature2: \"'liga' START CONTAINER\" {glyph} {joiner}\n")
             }
 
-            // Used in start_long_glyph_block for laTok
-            Lookups::EndLongGlyph => {
+            // Used in start_cont_block for laTok
+            Lookups::EndCont => {
                 let (glyph, _) = full_name.split_once("_").unwrap();
-                format!("Ligature2: \"'liga' START CONTAINER\" endRevLongGlyphTok {glyph}\n")
+                format!("Ligature2: \"'liga' START CONTAINER\" endRevContTok {glyph}\n")
             }
 
             // Used in tok_alt_block
@@ -451,7 +476,7 @@ Ligature2: "'liga' VAR" aTok question exclam
             // tok_upper_block, tok_ext_upper_block, and tok_alt_upper_block.
             Lookups::ComboLast => {
                 let (joiner, glyph) = full_name.split_once("_").unwrap();
-                format!("Ligature2: \"'liga' JOINER THEN GLYPH\" {joiner} {glyph}\nLigature2: \"'liga' CC CLEANUP\" combCartExtHalfTok {full_name}\nLigature2: \"'liga' CC CLEANUP\" combLongGlyphExtHalfTok {full_name}\nLigature2: \"'liga' CC CLEANUP\" combCartExtTok {full_name}\nLigature2: \"'liga' CC CLEANUP\" combLongGlyphExtTok {full_name}\n")
+                format!("Ligature2: \"'liga' JOINER THEN GLYPH\" {joiner} {glyph}\nLigature2: \"'liga' CC CLEANUP\" combCartExtHalfTok {full_name}\nLigature2: \"'liga' CC CLEANUP\" combContExtHalfTok {full_name}\nLigature2: \"'liga' CC CLEANUP\" combCartExtTok {full_name}\nLigature2: \"'liga' CC CLEANUP\" combContExtTok {full_name}\n")
             }
             Lookups::None => String::new(),
         };
@@ -489,18 +514,49 @@ pub enum Cc {
     Participant,
     None,
 }
+impl Cc {
+    pub fn gen(&self, full_name: String) -> String {
+        match self {
+            Cc::Full => format!("MultipleSubs2: \"'cc01' CART\" {full_name} combCartExtTok\nMultipleSubs2: \"'cc02' CONT\" {full_name} combContExtTok\n"),
+            
+            Cc::Half => if full_name.eq("comma") {
+                "MultipleSubs2: \"'cc01' CART\" combCartExt1TickTok\nMultipleSubs2: \"'cc02' CONT\" combContExtHalfTok\n".to_string()
+            } else if full_name.eq("quotesingle") {
+                "MultipleSubs2: \"'cc01' CART\" combCartExt5TickTok\nMultipleSubs2: \"'cc02' CONT\" combContExtHalfTok\n".to_string()
+            } else {
+                let ss00 = if full_name.eq("space") {
+                    "Substitution2: \"'ss00' SP TO ZWSP\" ZWSP\n"
+                } else {
+                    ""
+                };
+
+                format!("{ss00}MultipleSubs2: \"'cc01' CART\" {full_name} combCartExtHalfTok\nMultipleSubs2: \"'cc02' CONT\" {full_name} combContExtHalfTok\n")
+            },
+            
+            Cc::Participant => if full_name.contains("Tick") {
+                format!("MultipleSubs2: \"'cc01' CART\" {full_name} combCartExtNoneTok\n")
+            } else if full_name.contains("dakuten") {
+                format!("MultipleSubs2: \"'cc01' CART\" {full_name} combCartExtHalfTok\n")
+            } else {
+                format!("MultipleSubs2: \"'cc01' CART\" {full_name} combCartExtNoneTok\nMultipleSubs2: \"'cc02' CONT\" {full_name} combContExtNoneTok\n")
+            },
+            
+            Cc::None => String::new(),
+        }
+    }
+}
 
 #[derive(Clone)]
-pub struct GlyphFull {
-    pub glyph: GlyphBasic,
+pub struct GlyphFull<'a> {
+    pub glyph: GlyphBasic<'a>,
     pub encoding: Encoding,
     pub lookups: Lookups,
     pub cc_subs: Cc,
 }
 
-impl GlyphFull {
-    pub fn new_from_basic(
-        glyph: GlyphBasic,
+impl<'a> GlyphFull<'a> {
+    pub fn from_basic(
+        glyph: GlyphBasic<'a>,
         encoding: Encoding,
         lookups: Lookups,
         cc_subs: Cc,
@@ -513,7 +569,7 @@ impl GlyphFull {
         }
     }
 
-    pub fn new_from_enc(glyph: GlyphEnc, ff_pos: usize, lookups: Lookups, cc_subs: Cc) -> Self {
+    pub fn from_enc(glyph: GlyphEnc<'a>, ff_pos: usize, lookups: Lookups, cc_subs: Cc) -> Self {
         Self {
             glyph: glyph.glyph,
             encoding: Encoding::new(ff_pos, glyph.enc),
@@ -522,10 +578,10 @@ impl GlyphFull {
         }
     }
 
-    pub fn new_from_parts(
-        name: impl Into<String>,
+    pub fn from_parts(
+        name: impl Into<Cow<'a, str>>,
         width: usize,
-        rep: Rep,
+        rep: Rep<'a>,
         anchor: Option<Anchor>,
         anchor2: Option<Anchor>,
         encoding: Encoding,
@@ -561,30 +617,7 @@ impl GlyphFull {
         let lookups = self
             .lookups
             .gen(name.to_string(), full_name.clone(), variation);
-        let cc_subs = match self.cc_subs {
-            Cc::Full => format!("MultipleSubs2: \"'cc01' CART\" {full_name} combCartExtTok\nMultipleSubs2: \"'cc02' CONT\" {full_name} combLongGlyphExtTok\n"),
-            Cc::Half => if full_name.eq("comma") {
-                "MultipleSubs2: \"'cc01' CART\" combCartExt1TickTok\nMultipleSubs2: \"'cc02' CONT\" combLongGlyphExtHalfTok\n".to_string()
-            } else if full_name.eq("quotesingle") {
-                "MultipleSubs2: \"'cc01' CART\" combCartExt5TickTok\nMultipleSubs2: \"'cc02' CONT\" combLongGlyphExtHalfTok\n".to_string()
-            } else {
-                let ss00 = if full_name.eq("space") {
-                    "Substitution2: \"'ss00' SP TO ZWSP\" ZWSP\n"
-                } else {
-                    ""
-                };
-
-                format!("{ss00}MultipleSubs2: \"'cc01' CART\" {full_name} combCartExtHalfTok\nMultipleSubs2: \"'cc02' CONT\" {full_name} combLongGlyphExtHalfTok\n")
-            },
-            Cc::Participant => if full_name.contains("Tick") {
-                format!("MultipleSubs2: \"'cc01' CART\" {full_name} combCartExtNoneTok\n")
-            } else if full_name.contains("dakuten") {
-                format!("MultipleSubs2: \"'cc01' CART\" {full_name} combCartExtHalfTok\nMultipleSubs2: \"'cc02' CONT\" {full_name} combCartExtHalfTok\n")
-            } else {
-                format!("MultipleSubs2: \"'cc01' CART\" {full_name} combCartExtNoneTok\nMultipleSubs2: \"'cc02' CONT\" {full_name} combCartExtNoneTok\n")
-            },
-            Cc::None => String::new(),
-        };
+        let cc_subs = self.cc_subs.gen(full_name.clone());
         let flags = if full_name.eq("ZWSP")
             || full_name.eq("ZWNJ")
             || full_name.eq("ZWJ")
@@ -669,31 +702,31 @@ impl GlyphDescriptor {
     }
 }
 
-pub struct GlyphBlock {
-    pub glyphs: Vec<GlyphFull>,
-    pub prefix: String,
-    pub suffix: String,
-    pub color: String,
+pub struct GlyphBlock<'a> {
+    pub glyphs: Vec<GlyphFull<'a>>,
+    pub prefix: Cow<'a, str>,
+    pub suffix: Cow<'a, str>,
+    pub color: Cow<'a, str>,
 }
 
-impl GlyphBlock {
-    pub fn new_from_enc_glyphs(
+impl<'a> GlyphBlock<'a> {
+    pub fn from_enc_glyphs(
         ff_pos: &mut usize,
-        glyphs: Vec<GlyphEnc>,
+        glyphs: Vec<GlyphEnc<'a>>,
         lookups: LookupsMode,
         cc_subs: Cc,
-        prefix: impl Into<String>,
-        suffix: impl Into<String>,
-        color: impl Into<String>,
+        prefix: impl Into<Cow<'a, str>>,
+        suffix: impl Into<Cow<'a, str>>,
+        color: impl Into<Cow<'a, str>>,
     ) -> Self {
         let mut glyphs: Vec<GlyphFull> = glyphs
             .into_iter()
             .enumerate()
             .map(|(idx, glyph)| {
-                let g = GlyphFull::new_from_enc(
+                let g = GlyphFull::from_enc(
                     glyph,
                     *ff_pos,
-                    Lookups::new_from_mode(&lookups, idx),
+                    Lookups::from_mode(&lookups, idx),
                     cc_subs.clone(),
                 );
                 *ff_pos += 1;
@@ -712,24 +745,24 @@ impl GlyphBlock {
         }
     }
 
-    pub fn new_from_basic_glyphs(
+    pub fn from_basic_glyphs(
         ff_pos: &mut usize,
-        glyphs: Vec<GlyphBasic>,
+        glyphs: Vec<GlyphBasic<'a>>,
         lookups: LookupsMode,
         cc_subs: Cc,
-        prefix: impl Into<String>,
-        suffix: impl Into<String>,
-        color: impl Into<String>,
+        prefix: impl Into<Cow<'a, str>>,
+        suffix: impl Into<Cow<'a, str>>,
+        color: impl Into<Cow<'a, str>>,
         mut enc_pos: EncPos,
     ) -> Self {
         let mut glyphs: Vec<GlyphFull> = glyphs
             .into_iter()
             .enumerate()
             .map(|(idx, glyph)| {
-                let g = GlyphFull::new_from_basic(
+                let g = GlyphFull::from_basic(
                     glyph,
                     Encoding::new(*ff_pos, enc_pos.clone()),
-                    Lookups::new_from_mode(&lookups, idx),
+                    Lookups::from_mode(&lookups, idx),
                     cc_subs.clone(),
                 );
                 *ff_pos += 1;
@@ -749,14 +782,14 @@ impl GlyphBlock {
         }
     }
 
-    pub fn new_from_constants(
+    pub fn from_const_descriptors(
         ff_pos: &mut usize,
         glyphs: &'static [GlyphDescriptor],
         lookups: LookupsMode,
         cc_subs: Cc,
-        prefix: impl Into<String>,
-        suffix: impl Into<String>,
-        color: impl Into<String>,
+        prefix: impl Into<Cow<'a, str>>,
+        suffix: impl Into<Cow<'a, str>>,
+        color: impl Into<Cow<'a, str>>,
         enc_pos: EncPos,
         fallback_width: usize,
     ) -> Self {
@@ -773,7 +806,7 @@ impl GlyphBlock {
                     GlyphBasic::new(
                         name.to_string(),
                         width.unwrap_or(fallback_width),
-                        Rep::new(spline_set.to_string(), vec![]),
+                        Rep::new(spline_set.to_string(), &[]),
                         anchor.clone(),
                         anchor2.clone(),
                     )
@@ -781,22 +814,54 @@ impl GlyphBlock {
             )
             .collect();
 
-        Self::new_from_basic_glyphs(
+        Self::from_basic_glyphs(
             ff_pos, glyphs, lookups, cc_subs, prefix, suffix, color, enc_pos,
         )
     }
 
+    pub fn from_const_encs(
+        ff_pos: &mut usize,
+        glyphs: &'a [GlyphEnc],
+        lookups: LookupsMode,
+        cc_subs: Cc,
+        prefix: impl Into<Cow<'a, str>>,
+        suffix: impl Into<Cow<'a, str>>,
+        color: impl Into<Cow<'a, str>>,
+    ) -> Self {
+        let glyphs: Vec<GlyphEnc> = glyphs
+            .into_iter()
+            .map(
+                |GlyphEnc { glyph, enc }| {
+                    GlyphEnc {
+                        glyph: GlyphBasic::new(
+                            glyph.name.to_string(),
+                            glyph.width,
+                            Rep::new(glyph.rep.spline_set.to_string(), &[]),
+                            glyph.anchor.clone(),
+                            glyph.anchor2.clone(),
+                        ),
+                        enc: enc.clone(),
+                    }
+                },
+            )
+            .collect();
+
+        Self::from_enc_glyphs(
+            ff_pos, glyphs, lookups, cc_subs, prefix, suffix, color,
+        )
+    }
+
     /// Generates a `GlyphBlock` whose glyphs are all references this block's glyphs, all with the same `rel_pos`
-    pub fn new_from_refs(
+    pub fn from_refs(
         &self,
         ff_pos: &mut usize,
         rel_pos: String,
         lookups: LookupsMode,
         cc_subs: Cc,
         use_full_names: bool,
-        prefix: impl Into<String>,
-        suffix: impl Into<String>,
-        color: impl Into<String>,
+        prefix: impl Into<Cow<'a, str>>,
+        suffix: impl Into<Cow<'a, str>>,
+        color: impl Into<Cow<'a, str>>,
         width: Option<usize>,
         anchor: Option<Anchor>,
     ) -> Self {
@@ -807,21 +872,21 @@ impl GlyphBlock {
             .map(
                 |GlyphFull {
                      glyph, encoding, ..
-                 }| {
-                    let refs = vec![
-                        Some(Ref::new(encoding.clone(), rel_pos.clone())),
+                 }| -> GlyphBasic {
+                    let refs: Vec<Ref> = vec![
+                        Some(Ref::new(encoding, rel_pos.clone())),
                         None,
                     ]
                     .into_iter()
                     .flatten()
                     .collect();
-                    let name = if use_full_names {
-                        format!(
+                    let name: Cow<'a, str> = if use_full_names {
+                        Cow::Owned(format!(
                             "{pre}{name}{post}",
                             pre = self.prefix,
                             name = glyph.name,
                             post = self.suffix
-                        )
+                        ))
                     } else {
                         glyph.name
                     };
@@ -831,7 +896,7 @@ impl GlyphBlock {
                             Some(width) => width,
                             None => glyph.width,
                         },
-                        Rep::new(String::default(), refs),
+                        Rep::new(Cow::default(), refs),
                         match &anchor {
                             Some(anchor) => Some(anchor.clone()),
                             None => glyph.anchor,
@@ -843,7 +908,7 @@ impl GlyphBlock {
             )
             .collect();
 
-        Self::new_from_basic_glyphs(
+        Self::from_basic_glyphs(
             ff_pos,
             glyphs,
             lookups,
@@ -861,7 +926,7 @@ impl GlyphBlock {
         let mut glyphs = vec![];
 
         while *ff_pos < end {
-            glyphs.push(GlyphFull::new_from_parts(
+            glyphs.push(GlyphFull::from_parts(
                 format!("empty{i:04}", i = *ff_pos),
                 width,
                 Rep::default(),
@@ -876,9 +941,9 @@ impl GlyphBlock {
 
         Self {
             glyphs,
-            prefix: String::default(),
-            suffix: String::default(),
-            color: "dddddd".to_string(),
+            prefix: Cow::Borrowed(""),
+            suffix: Cow::Borrowed(""),
+            color: Cow::Borrowed("dddddd"),
         }
     }
 
@@ -887,9 +952,9 @@ impl GlyphBlock {
         let mut s = String::new();
         for g in &self.glyphs {
             s += &g.gen(
-                self.prefix.clone(),
-                self.suffix.clone(),
-                self.color.clone(),
+                self.prefix.to_string(),
+                self.suffix.to_string(),
+                self.color.to_string(),
                 variation,
             )
         }
