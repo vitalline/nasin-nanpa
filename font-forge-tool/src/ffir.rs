@@ -330,6 +330,8 @@ impl Lookups {
                     )
                 } else if name.eq("ZWJ") {
                     "Substitution2: \"'ss02' ZWJ TO STACK\" joinStackTok\nSubstitution2: \"'ss01' ZWJ TO SCALE\" joinScaleTok\n".to_string()
+                } else if name.eq("startCartComb") {
+                    "Ligature2: \"'liga' VAR\" ZWJ startCartTok\n".to_string()
                 } else if word.eq("i t a n") {
                     "Ligature2: \"'liga' VAR\" ijoTok ZWJ tanTok ZWJ anpaTok ZWJ nanpaTok\n".to_string()
                 } else if word.eq("l e p e k a") {
