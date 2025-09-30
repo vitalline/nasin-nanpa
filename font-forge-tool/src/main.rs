@@ -539,10 +539,8 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
             (1..=8)
                 .map(|x| format!("combCartExt{}TickTok", x))
                 .join(" "),
-            "startCartTok combCartExtTok startCartAltTok"
+            "startCartTok combCartExtTok startCartAltTok startCartCombTok"
         ));
-        // .iter()
-        // .map(|s| format!("{}Tok", s))
 
         let cont = {
             let longs = start_cont_block

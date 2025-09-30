@@ -560,7 +560,7 @@ pub const TOK_CTRL: [GlyphDescriptor; 17] = [
  450 678 472 700 500 700 c 0"#,
     ),
     GlyphDescriptor::new_with_width(
-        "StartCartComb",
+        "startCartComb",
         0,
         r#"
 -550 -110 m 0
