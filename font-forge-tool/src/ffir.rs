@@ -401,7 +401,7 @@ impl Lookups {
                 } else if full_name.eq("aTok_VAR04") {
                     "Ligature2: \"'liga' VAR\" semeTok ZWJ aTok\nLigature2: \"'liga' VAR\" aTok ZWJ semeTok\n"
                 } else if full_name.eq("aTok_VAR05") && variation == NasinNanpaVariation::Main {
-r#" Ligature2: "'liga' VAR" aTok exclam question
+r#"Ligature2: "'liga' VAR" aTok exclam question
 Ligature2: "'liga' VAR" aTok question exclam
 "#              } else if full_name.eq("muteTok_VAR02") {
                     "Ligature2: \"'liga' VAR\" lukaTok ZWJ lukaTok ZWJ lukaTok ZWJ lukaTok\n"
