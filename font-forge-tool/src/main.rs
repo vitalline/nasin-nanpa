@@ -98,8 +98,8 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
     tok_ctrl_block.glyphs[12].encoding.enc_pos = EncPos::None;
     tok_ctrl_block.glyphs[13].encoding.enc_pos = EncPos::None;
 
-    tok_ctrl_block.glyphs[16].cc_subs = Cc::Participant;
-    tok_ctrl_block.glyphs[16].encoding.enc_pos = EncPos::None;
+    tok_ctrl_block.glyphs[14].cc_subs = Cc::Participant;
+    tok_ctrl_block.glyphs[14].encoding.enc_pos = EncPos::None;
 
     let mut start_cont_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
@@ -168,9 +168,9 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
 
-    let base_cor_block = GlyphBlock::from_const_descriptors(
+    let base_core_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
-        BASE_COR.as_slice(),
+        BASE_CORE.as_slice(),
         if variation == NasinNanpaVariation::Main {
             LookupsMode::WordLigFromLetters
         } else {
@@ -184,9 +184,9 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
 
-    let mut base_ext_block = GlyphBlock::from_const_descriptors(
+    let base_ucsur_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
-        BASE_EXT.as_slice(),
+        BASE_UCSUR.as_slice(),
         if variation == NasinNanpaVariation::Main {
             LookupsMode::WordLigFromLetters
         } else {
@@ -199,8 +199,22 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         EncPos::Pos(0xF19A0),
         1000,
     );
-    base_ext_block.glyphs[41].encoding.enc_pos = EncPos::None;
-    base_ext_block.glyphs[42].encoding.enc_pos = EncPos::None;
+
+    let base_ext_block = GlyphBlock::from_const_descriptors(
+        &mut ff_pos,
+        BASE_EXT.as_slice(),
+        if variation == NasinNanpaVariation::Main {
+            LookupsMode::WordLigFromLetters
+        } else {
+            LookupsMode::None
+        },
+        Cc::Full,
+        "",
+        "Tok",
+        "8f80ff",
+        EncPos::Pos(0xF19E0),
+        1000,
+    );
 
     let base_alt_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
@@ -364,7 +378,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
     let put_in_class = |orig: String| format!("Class: {} {}", orig.len(), orig);
 
     let space_calt = {
-        let names = vec![&base_cor_block, &base_ext_block, &base_alt_block]
+        let names = vec![&base_core_block, &base_ucsur_block, &base_ext_block, &base_alt_block]
             .iter()
             .enumerate()
             .map(|(i, block)| {
@@ -476,7 +490,8 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         latn_block,
         no_comb_block,
         radicals_block,
-        base_cor_block,
+        base_core_block,
+        base_ucsur_block,
         base_ext_block,
         base_alt_block,
         outer_cor_block,
