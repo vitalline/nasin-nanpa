@@ -234,9 +234,9 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
     // alt ni
-    base_alt_block.glyphs[0].encoding.enc_pos = EncPos::Pos(0xF1999);
-    base_alt_block.glyphs[1].encoding.enc_pos = EncPos::Pos(0xF199A);
-    base_alt_block.glyphs[2].encoding.enc_pos = EncPos::Pos(0xF199B);
+    base_alt_block.glyphs[0].encoding.enc_pos = EncPos::Pos(0xF1989);
+    base_alt_block.glyphs[1].encoding.enc_pos = EncPos::Pos(0xF198A);
+    base_alt_block.glyphs[2].encoding.enc_pos = EncPos::Pos(0xF198B);
     // alt sewi
     base_alt_block.glyphs[43].encoding.enc_pos = EncPos::Pos(0xF198C);
 

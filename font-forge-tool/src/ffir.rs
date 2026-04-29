@@ -393,11 +393,68 @@ impl Lookups {
                 let parts: Vec<&str> = full_name.split("_").collect();
                 let glyph = parts[0];
                 let sel = parts[1];
+                let to_digits = |number: &str| -> (&str, &str) {
+                    match number {
+                        "VAR01" | "arrowW"  => ("one", "zero one"),
+                        "VAR02" | "arrowN"  => ("two", "zero two"),
+                        "VAR03" | "arrowE"  => ("three", "zero three"),
+                        "VAR04" | "arrowS"  => ("four", "zero four"),
+                        "VAR05" | "arrowNW" => ("five", "zero five"),
+                        "VAR06" | "arrowNE" => ("six", "zero six"),
+                        "VAR07" | "arrowSE" => ("seven", "zero seven"),
+                        "VAR08" | "arrowSW" => ("eight", "zero eight"),
+                        "VAR09"             => ("nine", "zero nine"),
+                        "VAR256"            => ("two five six", "zero two five six"),
+                        _ => panic!("{}", number),
+                    }
+                };
+                let (digit, padded_digit) = to_digits(sel); 
 
-                let a = if full_name.eq("aTok_VAR02") {
-                    "Ligature2: \"'liga' VAR\" aTok aTok\n"
+                // basic case
+                let basic = format!("Ligature2: \"'liga' VAR\" {glyph} {sel}\n");
+
+                // arrows (they will also get the ligs for digits/selectors)
+                let arrow = if full_name.contains("niTok_arrow") {
+                    format!("Ligature2: \"'liga' VAR\" {glyph} ZWJ {sel}\n")
+                } else { String::new() };
+
+                // determine what digit(s) should lead to this glyph
+                let mut digits = if full_name.contains("VAR0") || full_name.contains("niTok_arrow") {
+                    format!(
+r#"Ligature2: "'liga' VAR" {glyph} {digit}
+Ligature2: "'liga' VAR" {glyph} {padded_digit}
+"#)
+                } else { String::new() };
+
+                let rerand = if full_name.contains("VAR0") {
+                    // shaddow `sel` with just the single final digit
+                    let sel = sel.chars().last().unwrap().to_string();
+                    let converter = |name: &str| -> String {
+                        if variation == NasinNanpaVariation::Main {
+                            (1..9).map(|n|
+                                format!(
+r#"Ligature2: "'liga' VAR" {name}_VAR0{n} VAR0{sel}
+Ligature2: "'liga' VAR" {name}_VAR0{n} {digit}
+Ligature2: "'liga' VAR" {name}_VAR0{n} {padded_digit}
+"#)).collect::<String>()
+                        } else {
+                            (1..9).map(|n| format!(
+r#"Ligature2: "'liga' VAR" {name}_VAR0{n} VAR0{sel}
+"#)).collect::<String>()
+                        }
+                    };
+                    if full_name.starts_with("jakiTok") {
+                        converter("jakiTok")
+                    } else if full_name.starts_with("koTok") {
+                        converter("koTok")
+                    } else { String::new() }
+                } else { String::new() }; // end `let rerand`
+
+                // special cases
+                let special = if full_name.eq("aTok_VAR02") {
+                    "Ligature2: \"'liga' VAR\" aTok ZWJ aTok\n"
                 } else if full_name.eq("aTok_VAR03") {
-                    "Ligature2: \"'liga' VAR\" aTok aTok aTok\n"
+                    "Ligature2: \"'liga' VAR\" aTok ZWJ aTok ZWJ aTok\n"
                 } else if full_name.eq("aTok_VAR04") {
                     "Ligature2: \"'liga' VAR\" semeTok ZWJ aTok\nLigature2: \"'liga' VAR\" aTok ZWJ semeTok\n"
                 } else if full_name.eq("aTok_VAR05") && variation == NasinNanpaVariation::Main {
@@ -407,64 +464,12 @@ Ligature2: "'liga' VAR" aTok question exclam
                     "Ligature2: \"'liga' VAR\" lukaTok ZWJ lukaTok ZWJ lukaTok ZWJ lukaTok\n"
                 } else { "" };
 
-                let arrow_lig = if full_name.contains("niTok_arrow") {
-                    format!("Ligature2: \"'liga' VAR\" {glyph} ZWJ {sel}\n")
-                } else {
-                    String::new()
-                };
+                // exclude digit-based ligs in UCSUR version of font
+                if variation == NasinNanpaVariation::Ucsur {
+                    digits = String::new();
+                }
 
-                let num_lig = if variation == NasinNanpaVariation::Main && full_name.contains("VAR0") {
-                    format!(
-                        "Ligature2: \"'liga' VAR\" {glyph} {sel}\n",
-                        sel = match sel {
-                            "VAR01" | "arrowW" => "one",
-                            "VAR02" | "arrowN" => "two",
-                            "VAR03" | "arrowE" => "three",
-                            "VAR04" | "arrowS" => "four",
-                            "VAR05" | "arrowNW" => "five",
-                            "VAR06" | "arrowNE" => "six",
-                            "VAR07" | "arrowSE" => "seven",
-                            "VAR08" | "arrowSW" => "eight",
-                            _ => panic!(),
-                        }
-                    )
-                } else {
-                    String::new()
-                };
-
-                let rerand = if full_name.contains("VAR0") {
-                    let sel_word = match sel {
-                        "VAR01" | "arrowW" => "one",
-                        "VAR02" | "arrowN" => "two",
-                        "VAR03" | "arrowE" => "three",
-                        "VAR04" | "arrowS" => "four",
-                        "VAR05" | "arrowNW" => "five",
-                        "VAR06" | "arrowNE" => "six",
-                        "VAR07" | "arrowSE" => "seven",
-                        "VAR08" | "arrowSW" => "eight",
-                        _ => panic!(),
-                    };
-                    let sel = sel.chars().last().unwrap().to_string();
-                    if full_name.starts_with("jakiTok") {
-                        if variation == NasinNanpaVariation::Main {
-                            (1..9).map(|n| format!("Ligature2: \"'liga' VAR\" jakiTok_VAR0{n} VAR0{sel}\nLigature2: \"'liga' VAR\" jakiTok_VAR0{n} {sel_word}\n")).collect::<String>()
-                        } else {
-                            (1..9).map(|n| format!("Ligature2: \"'liga' VAR\" jakiTok_VAR0{n} VAR0{sel}\n")).collect::<String>()
-                        }
-                    } else if full_name.starts_with("koTok") {
-                        if variation == NasinNanpaVariation::Main {
-                            (1..9).map(|n| format!("Ligature2: \"'liga' VAR\" koTok_VAR0{n} VAR0{sel}\nLigature2: \"'liga' VAR\" koTok_VAR0{n} {sel_word}\n")).collect::<String>()
-                        } else {
-                            (1..9).map(|n| format!("Ligature2: \"'liga' VAR\" koTok_VAR0{n} VAR0{sel}\n")).collect::<String>()
-                        }
-                    } else {
-                        String::new()
-                    }
-                } else {
-                    String::new()
-                };
-
-                format!("{a}Ligature2: \"'liga' VAR\" {glyph} {sel}\n{arrow_lig}{num_lig}{rerand}")
+                format!("{basic}{special}{arrow}{digits}{rerand}")
             }
 
             // Used in tok_outer_block, tok_ext_outer_block, tok_alt_outer_block,

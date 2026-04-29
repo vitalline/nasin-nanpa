@@ -9213,7 +9213,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  888 754 897 752 905 747 c 0"#,
     ),
     GlyphDescriptor::new(
-        "niTok_VAR01",
+        "niTok_VAR09",
         r#"
 265 85 m 2
  465 285 l 2
