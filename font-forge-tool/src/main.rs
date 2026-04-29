@@ -62,6 +62,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         "",
         "fa6791",
     );
+    // NUL char
     ctrl_block.glyphs[0].cc_subs = Cc::None;
 
     let mut tok_ctrl_block = GlyphBlock::from_const_descriptors(
@@ -93,11 +94,13 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         EncPos::Pos(0xF1990),
         0,
     );
+    // join stack & join scale
     tok_ctrl_block.glyphs[5].cc_subs = Cc::Participant;
     tok_ctrl_block.glyphs[6].cc_subs = Cc::Participant;
+    // alt cartouche
     tok_ctrl_block.glyphs[12].encoding.enc_pos = EncPos::None;
     tok_ctrl_block.glyphs[13].encoding.enc_pos = EncPos::None;
-
+    // start cartouche, combining
     tok_ctrl_block.glyphs[14].cc_subs = Cc::Participant;
     tok_ctrl_block.glyphs[14].encoding.enc_pos = EncPos::None;
 
@@ -112,6 +115,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         EncPos::None,
         1000,
     );
+    // reverse extended la
     start_cont_block.glyphs[7].lookups = Lookups::EndCont;
 
     let latn_block = if variation == NasinNanpaVariation::Main {
@@ -152,8 +156,10 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         EncPos::None,
         1000,
     );
+    // dot and colon
     no_comb_block.glyphs[0].encoding.enc_pos = EncPos::Pos(0xF199C);
     no_comb_block.glyphs[1].encoding.enc_pos = EncPos::Pos(0xF199D);
+    // ideographic space
     no_comb_block.glyphs[4].encoding.enc_pos = EncPos::Pos(0x3000);
 
     let radicals_block = GlyphBlock::from_const_descriptors(
@@ -216,7 +222,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
 
-    let base_alt_block = GlyphBlock::from_const_descriptors(
+    let mut base_alt_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         BASE_ALT.as_slice(),
         LookupsMode::Alt,
@@ -227,6 +233,12 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         EncPos::None,
         1000,
     );
+    // alt ni
+    base_alt_block.glyphs[0].encoding.enc_pos = EncPos::Pos(0xF1999);
+    base_alt_block.glyphs[1].encoding.enc_pos = EncPos::Pos(0xF199A);
+    base_alt_block.glyphs[2].encoding.enc_pos = EncPos::Pos(0xF199B);
+    // alt sewi
+    base_alt_block.glyphs[43].encoding.enc_pos = EncPos::Pos(0xF198C);
 
     let outer_cor_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
