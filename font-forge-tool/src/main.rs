@@ -1,7 +1,7 @@
 use ffir::*;
 use glyph_blocks::{base::*, ctrl::*, inner::*, lower::*, outer::*, *};
 use itertools::Itertools;
-use std::{collections::HashSet, fs::File, io::Write};
+use std::{collections::HashSet, fmt::Display, fs::File, io::Write};
 
 mod ffir;
 mod glyph_blocks;
@@ -12,7 +12,17 @@ enum NasinNanpaVariation {
     Ucsur,
 }
 
+impl Display for NasinNanpaVariation {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match self {
+            NasinNanpaVariation::Main => "main",
+            NasinNanpaVariation::Ucsur => "UCSUR",
+        })
+    }
+}
+
 fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
+    print!("[fft]: Generating nasitan ({} v{})... ", variation, VERSION);
     let mut ff_pos: usize = 0;
 
     let ctrl_temp = CTRL;
@@ -618,10 +628,13 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
 {space_calt}{AFTER_SPACE_CALT}{zwj_calt}{AFTER_ZWJ_CALT}{chain_calt}{AFTER_CHAIN_CALT}{VERSION}{OTHER}BeginChars: {ff_pos} {ff_pos}
 {glyphs_string}EndChars
 EndSplineFont"#
-    )
+    )?;
+    println!("done.");
+    Ok(())
 }
 
 fn main() -> std::io::Result<()> {
+    println!("");
     gen_nasin_nanpa(NasinNanpaVariation::Main)?;
     gen_nasin_nanpa(NasinNanpaVariation::Ucsur)?;
     Ok(())
