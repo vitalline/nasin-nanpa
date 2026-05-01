@@ -32,10 +32,10 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
             "arrow".to_string(),
             "arrow".to_string(),
             "arrow".to_string(),
-            "combCartExtTok comma".to_string(),
-            "comma comma".to_string(),
-            "comma comma comma".to_string(),
-            "comma comma comma comma".to_string(),
+            "commaTick".to_string(),
+            "commaTick commaTick".to_string(),
+            "commaTick commaTick commaTick".to_string(),
+            "commaTick commaTick commaTick commaTick".to_string(),
             String::new(),
             String::new(),
             String::new(),
@@ -48,10 +48,10 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
             String::new(),
             String::new(),
             String::new(),
-            "combCartExtTok quotesingle".to_string(),
-            "quotesingle quotesingle".to_string(),
-            "quotesingle quotesingle quotesingle".to_string(),
-            "quotesingle quotesingle quotesingle quotesingle".to_string(),
+            "quoteTick".to_string(),
+            "quoteTick quoteTick".to_string(),
+            "quoteTick quoteTick quoteTick".to_string(),
+            "quoteTick quoteTick quoteTick quoteTick".to_string(),
             String::new(),
             String::new(),
             "quotedbl".to_string(),
@@ -97,7 +97,8 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
     tok_ctrl_block.glyphs[6].cc_subs = Cc::Participant;
     tok_ctrl_block.glyphs[12].encoding.enc_pos = EncPos::None;
     tok_ctrl_block.glyphs[13].encoding.enc_pos = EncPos::None;
-
+    tok_ctrl_block.glyphs[14].encoding.enc_pos = EncPos::None;
+    tok_ctrl_block.glyphs[15].encoding.enc_pos = EncPos::None;
     tok_ctrl_block.glyphs[16].cc_subs = Cc::Participant;
     tok_ctrl_block.glyphs[16].encoding.enc_pos = EncPos::None;
 

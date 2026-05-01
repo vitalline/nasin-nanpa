@@ -16,7 +16,7 @@ pub const CTRL: [GlyphEnc; 36] = [
     GlyphEnc::from_parts(EncPos::Pos(0x2198), "arrowSE", 0, Rep::const_dflt()),
     GlyphEnc::from_parts(EncPos::Pos(0x2199), "arrowSW", 0, Rep::const_dflt()),
     GlyphEnc::from_parts(
-        EncPos::None,
+        EncPos::Pos(0xF199E),
         "combCartExt1TickTok",
         0,
         Rep::const_new(
@@ -183,7 +183,7 @@ pub const CTRL: [GlyphEnc; 36] = [
         ),
     ),
     GlyphEnc::from_parts(
-        EncPos::None,
+        EncPos::Pos(0xF199F),
         "combCartExt5TickTok",
         0,
         Rep::const_new(

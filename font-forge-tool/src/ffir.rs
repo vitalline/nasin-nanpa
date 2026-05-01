@@ -323,6 +323,22 @@ impl Lookups {
                 let always = if word.contains("middleDotTok") {
                     do_it = false;
                     format!("Ligature2: \"'liga' VAR\" {word}\n")
+                } else if word.eq("commaTick") {
+                    "Ligature2: \"'liga' WORD\" combCartExtTok combCartExt1TickTok\n".to_string()
+                } else if word.contains("commaTick") {
+                    let parts: Vec<&str> = word.split(" ").collect();
+                    format!(
+                        "Ligature2: \"'liga' WORD\"{ticks}\n",
+                        ticks = " combCartExt1TickTok".repeat(parts.len())
+                    )
+                } else if word.eq("quoteTick") {
+                    "Ligature2: \"'liga' WORD\" combCartExtTok combCartExt5TickTok\n".to_string()
+                } else if word.contains("quoteTick") {
+                    let parts: Vec<&str> = word.split(" ").collect();
+                    format!(
+                        "Ligature2: \"'liga' WORD\"{ticks}\n",
+                        ticks = " combCartExt5TickTok".repeat(parts.len())
+                    )
                 } else if word.contains("CartAlt") {
                     format!(
                         "Ligature2: \"'liga' VAR\" {which}Tok VAR01\n",
@@ -359,6 +375,22 @@ impl Lookups {
                         } else {
                             format!("Ligature2: \"'liga' WORD\" {dir1}\n")
                         }
+                    } else if word.eq("commaTick") {
+                        "Ligature2: \"'liga' WORD\" combCartExtTok comma\n".to_string()
+                    } else if word.contains("commaTick") {
+                        let parts: Vec<&str> = word.split(" ").collect();
+                        format!(
+                            "Ligature2: \"'liga' WORD\"{ticks}\n",
+                            ticks = " comma".repeat(parts.len())
+                        )
+                    } else if word.eq("quoteTick") {
+                        "Ligature2: \"'liga' WORD\" combCartExtTok quotesingle\n".to_string()
+                    } else if word.contains("quoteTick") {
+                        let parts: Vec<&str> = word.split(" ").collect();
+                        format!(
+                            "Ligature2: \"'liga' WORD\"{ticks}\n",
+                            ticks = " quotesingle".repeat(parts.len())
+                        )
                     } else if word.eq("bar") {
                         format!("Ligature2: \"'liga' WORD\" bar\n")
                     } else if word.contains("CartAlt") {
