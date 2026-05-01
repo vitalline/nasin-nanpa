@@ -312,17 +312,37 @@ impl Lookups {
 
         let latin_ligs = match &self {
 
+
             // Used in tok_block and tok_ext_block when NasinNanpaVariation == Main
             Lookups::WordLigFromLetters => {
                 let lig = name.chars().join(" ");
                 let special = if full_name.eq("aleTok") {
 r#"Ligature2: "'liga' WORD" a l i
-"#
-                } else { "" };
+"#.to_string()
+
+                } else if full_name.eq("jakiTok") {
+                    (2..10).map(|n|
+                        format!(
+r#"Ligature2: "'liga' VAR" {full_name}_VAR0{n} VAR01
+Ligature2: "'liga' VAR" {full_name}_VAR0{n} one
+Ligature2: "'liga' VAR" {full_name}_VAR0{n} zero one
+"#                      )
+                    ).collect::<String>()
+
+                } else if full_name.eq("koTok") {
+                    (2..10).map(|n|
+                        format!(
+r#"Ligature2: "'liga' VAR" {full_name}_VAR0{n} VAR01
+Ligature2: "'liga' VAR" {full_name}_VAR0{n} one
+Ligature2: "'liga' VAR" {full_name}_VAR0{n} zero one
+"#                      )
+                    ).collect::<String>()
+
+                } else { String::new() };
+
                 format!(
 r#"Ligature2: "'liga' WORD" {lig}
-{special}"#
-                )
+{special}"#     )
             }
 
             // Used in ctrl_block, tok_ctrl_block, and tok_no_combo_block
@@ -403,7 +423,8 @@ r#"Ligature2: "'liga' WORD" {word}
                 };
 
                 format!("{always}{latin}")
-            } // Lookups::WordLigManual
+            } // end Lookups::WordLigManual
+
 
             // Used in start_cont_block
             Lookups::StartCont => {
@@ -413,6 +434,7 @@ r#"Ligature2: "'liga' START CONTAINER" {glyph} {joiner}
 "#              )
             }
 
+
             // Used in start_cont_block for laTok
             Lookups::EndCont => {
                 let (glyph, _) = full_name.split_once("_").unwrap();
@@ -420,6 +442,7 @@ r#"Ligature2: "'liga' START CONTAINER" {glyph} {joiner}
 r#"Ligature2: "'liga' START CONTAINER" endRevContTok {glyph}
 "#              )
             }
+
 
             // Used in tok_alt_block
             Lookups::Alt => {
@@ -463,19 +486,19 @@ Ligature2: "'liga' VAR" {glyph} {padded_digit}
 "#                  )
                 } else { String::new() };
 
-                let rerand = if full_name.contains("VAR0") {
+                let rerand = if full_name.contains("jakiTok") || full_name.contains("koTok") {
                     // shaddow `sel` with just the single final digit
                     let sel = sel.chars().last().unwrap().to_string();
                     let converter = |name: &str| -> String {
                         if variation == NasinNanpaVariation::Main {
-                            (1..9).map(|n|
+                            (2..10).map(|n|
                                 format!(
 r#"Ligature2: "'liga' VAR" {name}_VAR0{n} VAR0{sel}
 Ligature2: "'liga' VAR" {name}_VAR0{n} {digit}
 Ligature2: "'liga' VAR" {name}_VAR0{n} {padded_digit}
 "#)).collect::<String>()
                         } else {
-                            (1..9).map(|n| format!(
+                            (2..10).map(|n| format!(
 r#"Ligature2: "'liga' VAR" {name}_VAR0{n} VAR0{sel}
 "#)).collect::<String>()
                         }
@@ -509,7 +532,8 @@ r#"Ligature2: "'liga' VAR" lukaTok ZWJ lukaTok ZWJ lukaTok ZWJ lukaTok
                 }
 
                 format!("{basic}{special}{arrow}{digits}{rerand}")
-            }
+            } // end Lookups::Alt
+
 
             // Used in tok_outer_block, tok_ext_outer_block, tok_alt_outer_block,
             // tok_lower_block, tok_ext_lower_block, and tok_alt_lower_block.
@@ -520,6 +544,7 @@ r#"Ligature2: "'liga' GLYPH THEN JOINER" {glyph} {joiner}
 MultipleSubs2: "'ccmp' RESPAWN JOINER" {full_name} {joiner}
 "#              )
             }
+
 
             // Used in tok_inner_block, tok_ext_inner_block, tok_alt_inner_block,
             // tok_upper_block, tok_ext_upper_block, and tok_alt_upper_block.
@@ -533,43 +558,23 @@ Ligature2: "'liga' CC CLEANUP" combCartExtTok {full_name}
 Ligature2: "'liga' CC CLEANUP" combContExtTok {full_name}
 "#              )
             }
+
+
             Lookups::None => String::new(),
-        };
+        }; // end let latin_ligs
 
         let rand = if full_name.eq("jakiTok") {
             format!(
-r#"{rerand}AlternateSubs2: "'rand' RAND VARIATIONS"{vars}
+r#"AlternateSubs2: "'rand' RAND VARIATIONS"{vars}
 "#,             vars = (2..10).map(|n| format!(" jakiTok_VAR0{n}")).collect::<String>(),
-                rerand = if variation == NasinNanpaVariation::Main {
-                    (1..9).map(|n| format!(
-r#"Ligature2: "'liga' VAR" jakiTok_VAR0{n} VAR09
-Ligature2: "'liga' VAR" jakiTok_VAR0{n} nine
-"#)).collect::<String>()
-                } else { 
-                    (1..9).map(|n| format!(
-r#"Ligature2: "'liga' VAR" jakiTok_VAR0{n} VAR09
-"#)).collect::<String>()
-                }
             )
 
         } else if full_name.eq("koTok") {
             format!(
-r#"{rerand}AlternateSubs2: "'rand' RAND VARIATIONS"{vars}
+r#"AlternateSubs2: "'rand' RAND VARIATIONS"{vars}
 "#,             vars = (2..10).map(|n| format!(" koTok_VAR0{n}")).collect::<String>(),
-                rerand = if variation == NasinNanpaVariation::Main { 
-                    (1..9).map(|n| format!(
-r#"Ligature2: "'liga' VAR" koTok_VAR0{n} VAR09
-Ligature2: "'liga' VAR" koTok_VAR0{n} nine
-"#)).collect::<String>()
-                } else {
-                    (1..9).map(|n| format!(
-r#"Ligature2: "'liga' VAR" koTok_VAR0{n} VAR09
-"#)).collect::<String>()
-                }
             )
-        } else {
-            String::new()
-        };
+        } else { String::new() }; // end let rand
 
         format!("{latin_ligs}{rand}")
     }

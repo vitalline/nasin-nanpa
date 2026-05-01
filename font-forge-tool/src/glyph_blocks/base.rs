@@ -6552,7 +6552,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  757 728 770 733 783 733 c 0"#,
     ),
     GlyphDescriptor::new(
-        "jakiTok_VAR01",
+        "jakiTok_VAR02",
         r#"
 825 817 m 0
  851 817 875 795 875 767 c 0
@@ -6663,7 +6663,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  819 707 l 0"#,
     ),
     GlyphDescriptor::new(
-        "jakiTok_VAR02",
+        "jakiTok_VAR03",
         r#"
 366 536 m 0
  366 511 346 486 316 486 c 0
@@ -6734,7 +6734,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  287 268 249 296 218 326 c 1"#,
     ),
     GlyphDescriptor::new(
-        "jakiTok_VAR03",
+        "jakiTok_VAR04",
         r#"
 656 535 m 1
  538 517 394 487 268 487 c 0
@@ -6820,7 +6820,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  188 597 188 597 188 597 c 0"#,
     ),
     GlyphDescriptor::new(
-        "jakiTok_VAR04",
+        "jakiTok_VAR05",
         r#"
 661 53 m 0
  677 53 692 52 704 52 c 0
@@ -6900,7 +6900,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  490 45 505 58 505 101 c 0"#,
     ),
     GlyphDescriptor::new(
-        "jakiTok_VAR05",
+        "jakiTok_VAR06",
         r#"
 178 153 m 1
  178 152 l 1
@@ -6982,7 +6982,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  707 89 643 96 571 96 c 0"#,
     ),
     GlyphDescriptor::new(
-        "jakiTok_VAR06",
+        "jakiTok_VAR07",
         r#"
 518 326 m 0
  518 356 543 376 568 376 c 0
@@ -7050,7 +7050,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  75 252 75 255 75 257 c 0"#,
     ),
     GlyphDescriptor::new(
-        "jakiTok_VAR07",
+        "jakiTok_VAR08",
         r#"
 523 560 m 1
  506 532 492 505 492 477 c 0
@@ -7110,7 +7110,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  76 360 143 471 199 539 c 1"#,
     ),
     GlyphDescriptor::new(
-        "jakiTok_VAR08",
+        "jakiTok_VAR09",
         r#"
 152 760 m 2
  152 787 173 810 202 810 c 0
@@ -7190,7 +7190,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  201 335 l 0"#,
     ),
     GlyphDescriptor::new(
-        "koTok_VAR01",
+        "koTok_VAR02",
         r#"
 333 711 m 0
  279 711 233 695 233 638 c 0
@@ -7246,7 +7246,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  136 597 133 618 133 638 c 0"#,
     ),
     GlyphDescriptor::new(
-        "koTok_VAR02",
+        "koTok_VAR03",
         r#"
 91 582 m 0
  91 709 159 791 284 791 c 0
@@ -7304,7 +7304,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  173 129 189 104 217 81 c 0"#,
     ),
     GlyphDescriptor::new(
-        "koTok_VAR03",
+        "koTok_VAR04",
         r#"
 483 808 m 0
  530 835 583 850 636 850 c 0
@@ -7358,7 +7358,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  391 532 368 528 347 528 c 0"#,
     ),
     GlyphDescriptor::new(
-        "koTok_VAR04",
+        "koTok_VAR05",
         r#"
 420 732 m 0
  377 710 317 667 273 638 c 0
@@ -7412,7 +7412,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  697 634 709 633 722 633 c 0"#,
     ),
     GlyphDescriptor::new(
-        "koTok_VAR05",
+        "koTok_VAR06",
         r#"
 554 750 m 0
  499 750 484 737 454 718 c 0
@@ -7454,7 +7454,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  336 761 361 778 389 796 c 0"#,
     ),
     GlyphDescriptor::new(
-        "koTok_VAR06",
+        "koTok_VAR07",
         r#"
 373 812 m 0
  439 812 486 786 553 786 c 0
@@ -7504,7 +7504,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  633 691 596 686 553 686 c 0"#,
     ),
     GlyphDescriptor::new(
-        "koTok_VAR07",
+        "koTok_VAR08",
         r#"
 632 139 m 0
  688 139 735 120 790 120 c 0
@@ -7560,7 +7560,7 @@ pub const BASE_ALT: [GlyphDescriptor; 66] = [
  907 58 863 19 788 19 c 0"#,
     ),
     GlyphDescriptor::new(
-        "koTok_VAR08",
+        "koTok_VAR09",
         r#"
 777 479 m 0
  777 534 817 578 817 629 c 0
