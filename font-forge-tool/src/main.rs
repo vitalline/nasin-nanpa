@@ -32,7 +32,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         LookupsMode::WordLigManual(vec![
             String::new(),
             String::new(),
-            "bar".to_string(),
+            String::new(),
             "ampersand".to_string(),
             "arrow".to_string(),
             "arrow".to_string(),
@@ -399,39 +399,6 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
 
     let put_in_class = |orig: String| format!("Class: {} {}", orig.len(), orig);
 
-    let space_calt = {
-        let names = vec![&base_core_block, &base_ucsur_block, &base_ext_block, &base_alt_block]
-            .iter()
-            .enumerate()
-            .map(|(i, block)| {
-                block
-                    .glyphs
-                    .iter()
-                    .filter_map(|glyph| {
-                        if glyph.glyph.name.contains("empty") {
-                            None
-                        } else {
-                            Some(format!(
-                                "{}{}",
-                                glyph.glyph.name,
-                                if i != 2 { "Tok" } else { "" }
-                            ))
-                        }
-                    })
-                    .join(" ")
-            })
-            .join(" ");
-
-        let aa = (1..5).map(|x| format!("combCartExt{x}TickTok")).join(" ");
-        let bb = (5..9).map(|x| format!("combCartExt{x}TickTok")).join(" ");
-        let prenames = format!("{aa} combCartExtHalfTok combContExtHalfTok {bb} endCartTok combCartExtTok endContTok combContExtTok endRevContTok endCartAltTok teTok toTok middleDotTok colonTok middleDot2Tok middleDot3Tok");
-
-        let other = put_in_class(format!("{prenames} {names}"));
-        let sp = put_in_class("space".to_string());
-
-        format!("ContextPos2: class \"'kern' FIX SPACE\" 3 1 1 1\n  {other}\n  {sp}\n")
-    };
-
     let zwj_calt = {
         let scale_names = vec![&outer_cor_block, &outer_ext_block, &outer_alt_block]
             .iter()
@@ -625,7 +592,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         &mut file,
         r#"{HEADER}Version: {VERSION}
 {DETAILS1}ModificationTime: {time}{DETAILS2}{LOOKUPS}DEI: 91125
-{space_calt}{AFTER_SPACE_CALT}{zwj_calt}{AFTER_ZWJ_CALT}{chain_calt}{AFTER_CHAIN_CALT}{VERSION}{OTHER}BeginChars: {ff_pos} {ff_pos}
+{zwj_calt}{AFTER_ZWJ_CALT}{chain_calt}{AFTER_CHAIN_CALT}{VERSION}{OTHER}BeginChars: {ff_pos} {ff_pos}
 {glyphs_string}EndChars
 EndSplineFont"#
     )?;

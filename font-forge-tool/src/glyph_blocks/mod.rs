@@ -89,21 +89,8 @@ Lookup: 2 2 0 "'cc01' CART" { "'cc01' CART"  } ['cc01' ('DFLT' <'dflt' 'latn' > 
 Lookup: 2 2 0 "'cc02' CONT" { "'cc02' CONT"  } ['cc02' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
 Lookup: 4 0 0 "'liga' CC CLEANUP" { "'liga' CC CLEANUP"  } ['liga' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
 Lookup: 257 0 0 "'sqsh' SPACE SHIFT" { "'sqsh' SPACE SHIFT"  } ['sqsh' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
-Lookup: 263 0 0 "'kern' FIX SPACE" { "'kern' FIX SPACE"  } ['kern' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
 Lookup: 260 0 0 "'mark' POSITION COMBO" { "'mark' SPECIAL"  "'mark' STACK"  "'mark' SCALE"  } ['mark' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
 MarkAttachClasses: 1
-"#;
-
-pub const AFTER_SPACE_CALT: &str = r#" 2 0 0
-  ClsList: 1 2
-  BClsList:
-  FClsList:
- 1
-  SeqLookup: 1 "'sqsh' SPACE SHIFT"
-  ClassNames: "All_Others" "other" "space"
-  BClassNames: "All_Others"
-  FClassNames: "All_Others"
-EndFPST
 "#;
 
 pub const AFTER_ZWJ_CALT: &str = r#" 2 0 0

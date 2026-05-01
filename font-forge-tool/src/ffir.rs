@@ -380,6 +380,8 @@ r#"Ligature2: "'liga' VAR" meliTok ZWJ kuleTok ZWJ kuleTok
 r#"Ligature2: "'liga' SPACE" {word}
 Ligature2: "'liga' SPACE" z z space
 Ligature2: "'liga' SPACE" z z
+Ligature2: "'liga' SPACE" bar space
+Ligature2: "'liga' SPACE" bar 
 "#                      )
                     } else if word.eq("arrow") {
                         let convert = |c: char| match c {
