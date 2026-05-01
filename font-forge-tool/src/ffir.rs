@@ -1,7 +1,7 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, collections::HashSet};
 use itertools::Itertools;
 
-use crate::NasinNanpaVariation;
+use crate::{NasinNanpaVariation, glyph_blocks::base::BASE_ALT};
 
 /// An encoding position (either a number, or `None` which prints `-1`)
 #[derive(Default, Clone)]
@@ -310,17 +310,35 @@ impl Lookups {
 
     fn gen(&self, name: String, full_name: String, variation: NasinNanpaVariation) -> String {
 
+        let to_digits = |number: &str| -> (&str, &str) {
+            match number {
+                "1" | "VAR01" | "arrowW"  => ("one", "zero one"),
+                "2" | "VAR02" | "arrowN"  => ("two", "zero two"),
+                "3" | "VAR03" | "arrowE"  => ("three", "zero three"),
+                "4" | "VAR04" | "arrowS"  => ("four", "zero four"),
+                "5" | "VAR05" | "arrowNW" => ("five", "zero five"),
+                "6" | "VAR06" | "arrowNE" => ("six", "zero six"),
+                "7" | "VAR07" | "arrowSE" => ("seven", "zero seven"),
+                "8" | "VAR08" | "arrowSW" => ("eight", "zero eight"),
+                "9" | "VAR09"             => ("nine", "zero nine"),
+                "VAR256"            => ("two five six", "zero two five six"),
+                _ => panic!("{}", number),
+            }
+        };
+
+
         let latin_ligs = match &self {
 
 
             // Used in tok_block and tok_ext_block when NasinNanpaVariation == Main
             Lookups::WordLigFromLetters => {
                 let lig = name.chars().join(" ");
-                let special = if full_name.eq("aleTok") {
+                let ali = if full_name.eq("aleTok") {
 r#"Ligature2: "'liga' WORD" a l i
 "#.to_string()
+                } else { String::new() };
 
-                } else if full_name.eq("jakiTok") {
+                let blank_alts = if full_name.eq("jakiTok") {
                     (2..10).map(|n|
                         format!(
 r#"Ligature2: "'liga' VAR" {full_name}_VAR0{n} VAR01
@@ -338,11 +356,35 @@ Ligature2: "'liga' VAR" {full_name}_VAR0{n} zero one
 "#                      )
                     ).collect::<String>()
 
-                } else { String::new() };
+                } else {
+                    let alts: HashSet<char> = BASE_ALT.iter().filter_map(|g|
+                        if g.name.starts_with(&name) {
+                            Some(g.name
+                                .chars()
+                                .last()
+                                .unwrap()
+                                .to_string()
+                                .parse()
+                                .unwrap()
+                            )
+                        } else { None }
+                    ).collect();
+                    let range = HashSet::from(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+                    let blanks = range.difference(&alts);
+                    blanks.into_iter().map(|b| {
+                        let (digit, padded_digit) = to_digits(&b.to_string()); 
+                        format!(
+r#"Ligature2: "'liga' VAR" {full_name} VAR0{b}
+Ligature2: "'liga' VAR" {full_name} {digit}
+Ligature2: "'liga' VAR" {full_name} {padded_digit}
+"#,                      )
+                    }).collect::<String>()
+                };
 
                 format!(
 r#"Ligature2: "'liga' WORD" {lig}
-{special}"#     )
+{ali}{blank_alts}"#
+                )
             }
 
             // Used in ctrl_block, tok_ctrl_block, and tok_no_combo_block
@@ -451,21 +493,6 @@ r#"Ligature2: "'liga' START CONTAINER" endRevContTok {glyph}
                 let parts: Vec<&str> = full_name.split("_").collect();
                 let glyph = parts[0];
                 let sel = parts[1];
-                let to_digits = |number: &str| -> (&str, &str) {
-                    match number {
-                        "VAR01" | "arrowW"  => ("one", "zero one"),
-                        "VAR02" | "arrowN"  => ("two", "zero two"),
-                        "VAR03" | "arrowE"  => ("three", "zero three"),
-                        "VAR04" | "arrowS"  => ("four", "zero four"),
-                        "VAR05" | "arrowNW" => ("five", "zero five"),
-                        "VAR06" | "arrowNE" => ("six", "zero six"),
-                        "VAR07" | "arrowSE" => ("seven", "zero seven"),
-                        "VAR08" | "arrowSW" => ("eight", "zero eight"),
-                        "VAR09"             => ("nine", "zero nine"),
-                        "VAR256"            => ("two five six", "zero two five six"),
-                        _ => panic!("{}", number),
-                    }
-                };
                 let (digit, padded_digit) = to_digits(sel); 
 
                 // basic case
