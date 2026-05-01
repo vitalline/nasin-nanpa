@@ -70,6 +70,8 @@ This table describes both the ligatures in nasin nanpa and the AutoHotKey script
 | **U+F199B** | `}` | `END OF REVERSE LONG GLYPH` |
 | **U+F199C** | `.` | `MIDDLE DOT` |
 | **U+F199D** | `:` | `COLON` |
+| **U+F199E** | `,` | `COMBINING TALLY MARK` |
+| **U+F199F** | `'` | `COMBINING TALLY MARK ABOVE` |
 | **U+FE00** -<br>**U+FE07** | `1` - `8` | `VARIATION SELECTOR 1` (`VAR01`) - `VARIATION SELECTOR 8` (`VAR08`) |
 | **U+200C** | `\|` | `ZERO WIDTH NON JOINER` (`ZWNJ`) |
 | **U+200D** | `&` | `ZERO WIDTH JOINER` (`ZWJ`) |
