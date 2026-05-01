@@ -15,7 +15,7 @@ Weight: Regular
 Copyright: jan Itan li mama. jan mute a li pona e pali ona.
 "#;
 
-pub const VERSION: &str = "5.0.0-beta.4";
+pub const VERSION: &str = "5.0.0-beta.5";
 
 pub const DETAILS1: &str = r#"ItalicAngle: 0
 UnderlinePosition: 0
@@ -89,21 +89,8 @@ Lookup: 2 2 0 "'cc01' CART" { "'cc01' CART"  } ['cc01' ('DFLT' <'dflt' 'latn' > 
 Lookup: 2 2 0 "'cc02' CONT" { "'cc02' CONT"  } ['cc02' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
 Lookup: 4 0 0 "'liga' CC CLEANUP" { "'liga' CC CLEANUP"  } ['liga' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
 Lookup: 257 0 0 "'sqsh' SPACE SHIFT" { "'sqsh' SPACE SHIFT"  } ['sqsh' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
-Lookup: 263 0 0 "'kern' FIX SPACE" { "'kern' FIX SPACE"  } ['kern' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
 Lookup: 260 0 0 "'mark' POSITION COMBO" { "'mark' SPECIAL"  "'mark' STACK"  "'mark' SCALE"  } ['mark' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
 MarkAttachClasses: 1
-"#;
-
-pub const AFTER_SPACE_CALT: &str = r#" 2 0 0
-  ClsList: 1 2
-  BClsList:
-  FClsList:
- 1
-  SeqLookup: 1 "'sqsh' SPACE SHIFT"
-  ClassNames: "All_Others" "other" "space"
-  BClassNames: "All_Others"
-  FClassNames: "All_Others"
-EndFPST
 "#;
 
 pub const AFTER_ZWJ_CALT: &str = r#" 2 0 0
@@ -149,7 +136,7 @@ NameList: AGL For New Fonts
 DisplaySize: -72
 AntiAlias: 1
 FitToEm: 1
-WinInfo: 304 16 6
+WinInfo: 0 8 16
 BeginPrivate: 12
 BlueValues 22 [-2 1 414 417 796 797]
 OtherBlues 11 [-385 -384]

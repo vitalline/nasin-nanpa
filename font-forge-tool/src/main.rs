@@ -1,7 +1,7 @@
 use ffir::*;
 use glyph_blocks::{base::*, ctrl::*, inner::*, lower::*, outer::*, *};
 use itertools::Itertools;
-use std::{collections::HashSet, fs::File, io::Write};
+use std::{collections::HashSet, fmt::Display, fs::File, io::Write};
 
 mod ffir;
 mod glyph_blocks;
@@ -12,7 +12,17 @@ enum NasinNanpaVariation {
     Ucsur,
 }
 
+impl Display for NasinNanpaVariation {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match self {
+            NasinNanpaVariation::Main => "main",
+            NasinNanpaVariation::Ucsur => "UCSUR",
+        })
+    }
+}
+
 fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
+    print!("[fft]: Generating nasitan ({} v{})... ", variation, VERSION);
     let mut ff_pos: usize = 0;
 
     let ctrl_temp = CTRL;
@@ -22,7 +32,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         LookupsMode::WordLigManual(vec![
             String::new(),
             String::new(),
-            "bar".to_string(),
+            String::new(),
             "ampersand".to_string(),
             "arrow".to_string(),
             "arrow".to_string(),
@@ -62,6 +72,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         "",
         "fa6791",
     );
+    // NUL char
     ctrl_block.glyphs[0].cc_subs = Cc::None;
 
     let mut tok_ctrl_block = GlyphBlock::from_const_descriptors(
@@ -82,8 +93,6 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
             "braceright".to_string(),
             "startCartAlt".to_string(),
             "endCartAlt".to_string(),
-            "t e".to_string(),
-            "t o".to_string(),
             "ZWJ startCartTok".to_string(),
         ]),
         Cc::None,
@@ -93,14 +102,15 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         EncPos::Pos(0xF1990),
         0,
     );
+    // join stack & join scale
     tok_ctrl_block.glyphs[5].cc_subs = Cc::Participant;
     tok_ctrl_block.glyphs[6].cc_subs = Cc::Participant;
+    // alt cartouche
     tok_ctrl_block.glyphs[12].encoding.enc_pos = EncPos::None;
     tok_ctrl_block.glyphs[13].encoding.enc_pos = EncPos::None;
+    // start cartouche, combining
+    tok_ctrl_block.glyphs[14].cc_subs = Cc::Participant;
     tok_ctrl_block.glyphs[14].encoding.enc_pos = EncPos::None;
-    tok_ctrl_block.glyphs[15].encoding.enc_pos = EncPos::None;
-    tok_ctrl_block.glyphs[16].cc_subs = Cc::Participant;
-    tok_ctrl_block.glyphs[16].encoding.enc_pos = EncPos::None;
 
     let mut start_cont_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
@@ -113,6 +123,7 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         EncPos::None,
         1000,
     );
+    // reverse extended la
     start_cont_block.glyphs[7].lookups = Lookups::EndCont;
 
     let latn_block = if variation == NasinNanpaVariation::Main {
@@ -153,8 +164,10 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         EncPos::None,
         1000,
     );
+    // dot and colon
     no_comb_block.glyphs[0].encoding.enc_pos = EncPos::Pos(0xF199C);
     no_comb_block.glyphs[1].encoding.enc_pos = EncPos::Pos(0xF199D);
+    // ideographic space
     no_comb_block.glyphs[4].encoding.enc_pos = EncPos::Pos(0x3000);
 
     let radicals_block = GlyphBlock::from_const_descriptors(
@@ -169,9 +182,9 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
 
-    let base_cor_block = GlyphBlock::from_const_descriptors(
+    let base_core_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
-        BASE_COR.as_slice(),
+        BASE_CORE.as_slice(),
         if variation == NasinNanpaVariation::Main {
             LookupsMode::WordLigFromLetters
         } else {
@@ -185,9 +198,9 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         1000,
     );
 
-    let mut base_ext_block = GlyphBlock::from_const_descriptors(
+    let base_ucsur_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
-        BASE_EXT.as_slice(),
+        BASE_UCSUR.as_slice(),
         if variation == NasinNanpaVariation::Main {
             LookupsMode::WordLigFromLetters
         } else {
@@ -200,10 +213,24 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         EncPos::Pos(0xF19A0),
         1000,
     );
-    base_ext_block.glyphs[41].encoding.enc_pos = EncPos::None;
-    base_ext_block.glyphs[42].encoding.enc_pos = EncPos::None;
 
-    let base_alt_block = GlyphBlock::from_const_descriptors(
+    let base_ext_block = GlyphBlock::from_const_descriptors(
+        &mut ff_pos,
+        BASE_EXT.as_slice(),
+        if variation == NasinNanpaVariation::Main {
+            LookupsMode::WordLigFromLetters
+        } else {
+            LookupsMode::None
+        },
+        Cc::Full,
+        "",
+        "Tok",
+        "8f80ff",
+        EncPos::Pos(0xF19E0),
+        1000,
+    );
+
+    let mut base_alt_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
         BASE_ALT.as_slice(),
         LookupsMode::Alt,
@@ -214,6 +241,12 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         EncPos::None,
         1000,
     );
+    // alt ni
+    base_alt_block.glyphs[0].encoding.enc_pos = EncPos::Pos(0xF1989);
+    base_alt_block.glyphs[1].encoding.enc_pos = EncPos::Pos(0xF198A);
+    base_alt_block.glyphs[2].encoding.enc_pos = EncPos::Pos(0xF198B);
+    // alt sewi
+    base_alt_block.glyphs[43].encoding.enc_pos = EncPos::Pos(0xF198C);
 
     let outer_cor_block = GlyphBlock::from_const_descriptors(
         &mut ff_pos,
@@ -364,39 +397,6 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
 
     let put_in_class = |orig: String| format!("Class: {} {}", orig.len(), orig);
 
-    let space_calt = {
-        let names = vec![&base_cor_block, &base_ext_block, &base_alt_block]
-            .iter()
-            .enumerate()
-            .map(|(i, block)| {
-                block
-                    .glyphs
-                    .iter()
-                    .filter_map(|glyph| {
-                        if glyph.glyph.name.contains("empty") {
-                            None
-                        } else {
-                            Some(format!(
-                                "{}{}",
-                                glyph.glyph.name,
-                                if i != 2 { "Tok" } else { "" }
-                            ))
-                        }
-                    })
-                    .join(" ")
-            })
-            .join(" ");
-
-        let aa = (1..5).map(|x| format!("combCartExt{x}TickTok")).join(" ");
-        let bb = (5..9).map(|x| format!("combCartExt{x}TickTok")).join(" ");
-        let prenames = format!("{aa} combCartExtHalfTok combContExtHalfTok {bb} endCartTok combCartExtTok endContTok combContExtTok endRevContTok endCartAltTok teTok toTok middleDotTok colonTok middleDot2Tok middleDot3Tok");
-
-        let other = put_in_class(format!("{prenames} {names}"));
-        let sp = put_in_class("space".to_string());
-
-        format!("ContextPos2: class \"'kern' FIX SPACE\" 3 1 1 1\n  {other}\n  {sp}\n")
-    };
-
     let zwj_calt = {
         let scale_names = vec![&outer_cor_block, &outer_ext_block, &outer_alt_block]
             .iter()
@@ -477,7 +477,8 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         latn_block,
         no_comb_block,
         radicals_block,
-        base_cor_block,
+        base_core_block,
+        base_ucsur_block,
         base_ext_block,
         base_alt_block,
         outer_cor_block,
@@ -589,13 +590,16 @@ fn gen_nasin_nanpa(variation: NasinNanpaVariation) -> std::io::Result<()> {
         &mut file,
         r#"{HEADER}Version: {VERSION}
 {DETAILS1}ModificationTime: {time}{DETAILS2}{LOOKUPS}DEI: 91125
-{space_calt}{AFTER_SPACE_CALT}{zwj_calt}{AFTER_ZWJ_CALT}{chain_calt}{AFTER_CHAIN_CALT}{VERSION}{OTHER}BeginChars: {ff_pos} {ff_pos}
+{zwj_calt}{AFTER_ZWJ_CALT}{chain_calt}{AFTER_CHAIN_CALT}{VERSION}{OTHER}BeginChars: {ff_pos} {ff_pos}
 {glyphs_string}EndChars
 EndSplineFont"#
-    )
+    )?;
+    println!("done.");
+    Ok(())
 }
 
 fn main() -> std::io::Result<()> {
+    println!("");
     gen_nasin_nanpa(NasinNanpaVariation::Main)?;
     gen_nasin_nanpa(NasinNanpaVariation::Ucsur)?;
     Ok(())
