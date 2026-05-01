@@ -1179,7 +1179,7 @@ pub const START_CONT: [GlyphDescriptor; 20] = [
 ];
 
 pub const LATN: [GlyphDescriptor; 95] = [
-    GlyphDescriptor::new("space", r#""#),
+    GlyphDescriptor::new_with_width("space", 0, r#""#),
     GlyphDescriptor::new(
         "exclam",
         r#"
