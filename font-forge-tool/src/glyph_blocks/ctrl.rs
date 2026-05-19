@@ -144,7 +144,7 @@ pub const CTRL: [GlyphEnc; 40] = [
         ),
     ),
     GlyphEnc::from_parts(
-        EncPos::Pos(0xF199F),
+        EncPos::None,
         "combCartExt5TickTok",
         0,
         Rep::const_new(
@@ -259,7 +259,7 @@ pub const CTRL: [GlyphEnc; 40] = [
         ),
     ),
     GlyphEnc::from_parts(
-        EncPos::None,
+        EncPos::Pos(0xF199F),
         "combCartExt1TopTickTok",
         0,
         Rep::const_new(
