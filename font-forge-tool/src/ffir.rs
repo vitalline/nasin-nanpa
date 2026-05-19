@@ -312,16 +312,16 @@ impl Lookups {
 
         let to_digits = |number: &str| -> (&str, &str) {
             match number {
-                "1" | "VAR01" | "arrowW"  => ("one", "zero one"),
-                "2" | "VAR02" | "arrowN"  => ("two", "zero two"),
-                "3" | "VAR03" | "arrowE"  => ("three", "zero three"),
-                "4" | "VAR04" | "arrowS"  => ("four", "zero four"),
-                "5" | "VAR05" | "arrowNW" => ("five", "zero five"),
+                "1" | "VAR01" | "arrowS"  => ("one", "zero one"),
+                "2" | "VAR02" | "arrowE"  => ("two", "zero two"),
+                "3" | "VAR03" | "arrowN"  => ("three", "zero three"),
+                "4" | "VAR04" | "arrowW"  => ("four", "zero four"),
+                "5" | "VAR05" | "arrowSE" => ("five", "zero five"),
                 "6" | "VAR06" | "arrowNE" => ("six", "zero six"),
-                "7" | "VAR07" | "arrowSE" => ("seven", "zero seven"),
+                "7" | "VAR07" | "arrowNW" => ("seven", "zero seven"),
                 "8" | "VAR08" | "arrowSW" => ("eight", "zero eight"),
                 "9" | "VAR09"             => ("nine", "zero nine"),
-                "VAR256"            => ("two five six", "zero two five six"),
+                "VAR256" => ("two five six", "zero two five six"),
                 _ => panic!("{}", number),
             }
         };
@@ -338,7 +338,7 @@ r#"Ligature2: "'liga' WORD" a l i
 "#.to_string()
                 } else { String::new() };
 
-                let blank_alts = if full_name.eq("jakiTok") {
+                let alts = if full_name.eq("jakiTok") {
                     (2..10).map(|n|
                         format!(
 r#"Ligature2: "'liga' VAR" {full_name}_VAR0{n} VAR01
@@ -356,8 +356,28 @@ Ligature2: "'liga' VAR" {full_name}_VAR0{n} zero one
 "#                      )
                     ).collect::<String>()
 
+                } else if full_name.eq("niTok") {
+r#"Ligature2: "'liga' VAR" niTok arrowS
+Ligature2: "'liga' VAR" niTok ZWJ arrowS
+Ligature2: "'liga' VAR" niTok one
+Ligature2: "'liga' VAR" niTok zero one
+"#.to_string()
+                } else if full_name.eq("akesiTok")
+                  ||      full_name.eq("namakoTok") {
+
+                    let blanks = HashSet::from(['1', '3', '4', '5', '6', '7', '8', '9']);
+                    blanks.into_iter().sorted().map(|b| {
+                        let (digit, mut padded_digit) = to_digits(&b.to_string()); 
+                        if digit.eq("one") { padded_digit = "zero two"; }
+                        format!(
+r#"Ligature2: "'liga' VAR" {full_name} VAR0{b}
+Ligature2: "'liga' VAR" {full_name} {digit}
+Ligature2: "'liga' VAR" {full_name} {padded_digit}
+"#                      )
+                    }).collect::<String>()
+
                 } else {
-                    let alts: HashSet<char> = BASE_ALT.iter().filter_map(|g|
+                    let find_alts: HashSet<char> = BASE_ALT.iter().sorted_by(|&a, &b| Ord::cmp(a.name, b.name)).filter_map(|g|
                         if g.name.starts_with(&name) {
                             Some(g.name
                                 .chars()
@@ -369,8 +389,8 @@ Ligature2: "'liga' VAR" {full_name}_VAR0{n} zero one
                             )
                         } else { None }
                     ).collect();
-                    let range = HashSet::from(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
-                    let blanks = range.difference(&alts);
+                    let domain = HashSet::from(['1', '2', '3', '4', '5', '6', '7', '8', '9']);
+                    let blanks = domain.difference(&find_alts);
                     blanks.into_iter().map(|b| {
                         let (digit, padded_digit) = to_digits(&b.to_string()); 
                         format!(
@@ -379,11 +399,11 @@ Ligature2: "'liga' VAR" {full_name} {digit}
 Ligature2: "'liga' VAR" {full_name} {padded_digit}
 "#,                      )
                     }).collect::<String>()
-                };
+                }; // end let blank_alts
 
                 format!(
 r#"Ligature2: "'liga' WORD" {lig}
-{ali}{blank_alts}"#
+{ali}{alts}"#
                 )
             }
 
@@ -396,24 +416,6 @@ r#"Ligature2: "'liga' WORD" {lig}
                     format!(
 r#"Ligature2: "'liga' VAR" {word}
 "#                  )
-                } else if word.eq("commaTick") {
-r#"Ligature2: "'liga' WORD" combCartExtTok combCartExt1TickTok
-"#.to_string()
-                } else if word.contains("commaTick") {
-                    let parts: Vec<&str> = word.split(" ").collect();
-                    format!(
-r#"Ligature2: "'liga' WORD"{ticks}
-"#,                     ticks = " combCartExt1TickTok".repeat(parts.len())
-                    )
-                } else if word.eq("quoteTick") {
-r#"Ligature2: "'liga' WORD" combCartExtTok combCartExt5TickTok
-"#.to_string()
-                } else if word.contains("quoteTick") {
-                    let parts: Vec<&str> = word.split(" ").collect();
-                    format!(
-r#"Ligature2: "'liga' WORD"{ticks}
-"#,                     ticks = " combCartExt5TickTok".repeat(parts.len())
-                    )
                 } else if word.contains("CartAlt") {
                     format!(
 r#"Ligature2: "'liga' VAR" {which}Tok VAR01
@@ -435,14 +437,17 @@ r#"Ligature2: "'liga' VAR" meliTok ZWJ kuleTok ZWJ kuleTok
                 } else { String::new() };
 
                 let latin = if variation == NasinNanpaVariation::Main && do_it {
-                    if word.eq("space space") {
-                        format!(
+                    if word.eq("space space") { format!(
 r#"Ligature2: "'liga' SPACE" {word}
 Ligature2: "'liga' SPACE" z z space
 Ligature2: "'liga' SPACE" z z
 Ligature2: "'liga' SPACE" bar space
 Ligature2: "'liga' SPACE" bar 
-"#                      )
+"#)
+
+                    } else if word.eq("halfSpace") {
+r#"Ligature2: "'half' RESTORE SPACE" space
+"#.to_string()
                     } else if word.eq("arrow") {
                         let convert = |c: char| match c {
                             'W' => "less",
@@ -464,32 +469,19 @@ Ligature2: "'liga' WORD" {dir2} {dir1}
 r#"Ligature2: "'liga' WORD" {dir1}
 "#                          )
                         }
-                    } else if word.eq("commaTick") {
-                        "Ligature2: \"'liga' WORD\" combCartExtTok comma\n".to_string()
-                    } else if word.contains("commaTick") {
-                        let parts: Vec<&str> = word.split(" ").collect();
-                        format!(
-                            "Ligature2: \"'liga' WORD\"{ticks}\n",
-                            ticks = " comma".repeat(parts.len())
-                        )
-                    } else if word.eq("quoteTick") {
-                        "Ligature2: \"'liga' WORD\" combCartExtTok quotesingle\n".to_string()
-                    } else if word.contains("quoteTick") {
-                        let parts: Vec<&str> = word.split(" ").collect();
-                        format!(
-                            "Ligature2: \"'liga' WORD\"{ticks}\n",
-                            ticks = " quotesingle".repeat(parts.len())
-                        )
+
                     } else if word.eq("bar") {
                         format!(
 r#"Ligature2: "'liga' WORD" bar
 "#                      )
+
                     } else if word.contains("CartAlt") {
-                            format!(
+                        let which = if word.contains("start") { "startCart" } else { "endCart" };
+                        format!(
 r#"Ligature2: "'liga' VAR" {which}Tok VAR01
 Ligature2: "'liga' VAR" {which}Tok one
-"#,                             which = if word.contains("start") { "startCart" } else { "endCart" }
-                            )
+"#)
+
                     } else {
                         format!(
 r#"Ligature2: "'liga' WORD" {word}
@@ -542,11 +534,21 @@ r#"Ligature2: "'liga' VAR" {glyph} ZWJ {sel}
                 } else { String::new() };
 
                 // determine what digit(s) should lead to this glyph
-                let mut digits = if full_name.contains("VAR0") || full_name.contains("niTok_arrow") {
-                    format!(
+                let mut digits =
+                 if full_name.contains("VAR0") || full_name.contains("niTok_arrow") {
+                     if full_name.starts_with("akesiTok")
+                     || full_name.starts_with("namakoTok") {
+                         format!(
+r#"Ligature2: "'liga' VAR" {glyph} VAR02
+Ligature2: "'liga' VAR" {glyph} two
+Ligature2: "'liga' VAR" {glyph} zero one
+"#)
+                     } else {
+                         format!(
 r#"Ligature2: "'liga' VAR" {glyph} {digit}
 Ligature2: "'liga' VAR" {glyph} {padded_digit}
-"#                  )
+"#                       )
+                    }
                 } else { String::new() };
 
                 let rerand = if full_name.contains("jakiTok") || full_name.contains("koTok") {
@@ -576,18 +578,23 @@ r#"Ligature2: "'liga' VAR" {name}_VAR0{n} VAR0{sel}
                 // special cases
                 let special = if full_name.eq("aTok_VAR02") {
 r#"Ligature2: "'liga' VAR" aTok ZWJ aTok
-"#              } else if full_name.eq("aTok_VAR03") {
+"#
+                } else if full_name.eq("aTok_VAR03") {
 r#"Ligature2: "'liga' VAR" aTok ZWJ aTok ZWJ aTok
-"#              } else if full_name.eq("aTok_VAR04") {
+"#
+                } else if full_name.eq("aTok_VAR04") {
 r#"Ligature2: "'liga' VAR" semeTok ZWJ aTok
 Ligature2: "'liga' VAR" aTok ZWJ semeTok
-"#              } else if full_name.eq("aTok_VAR05")
+"#
+                } else if full_name.eq("aTok_VAR05")
                        && variation == NasinNanpaVariation::Main {
 r#"Ligature2: "'liga' VAR" aTok exclam question
 Ligature2: "'liga' VAR" aTok question exclam
-"#              } else if full_name.eq("muteTok_VAR02") {
+"#
+                } else if full_name.eq("muteTok_VAR02") {
 r#"Ligature2: "'liga' VAR" lukaTok ZWJ lukaTok ZWJ lukaTok ZWJ lukaTok
-"#              } else { "" };
+"#
+                } else { "" };
 
                 // exclude digit-based ligs in UCSUR version of font
                 if variation == NasinNanpaVariation::Ucsur {
@@ -627,16 +634,21 @@ Ligature2: "'liga' CC CLEANUP" combContExtTok {full_name}
         }; // end let latin_ligs
 
         let rand = if full_name.eq("jakiTok") {
+            let vars = (2..10)
+                .map(|n| format!(" jakiTok_VAR0{n}"))
+                .collect::<String>();
             format!(
 r#"AlternateSubs2: "'rand' RAND VARIATIONS"{vars}
-"#,             vars = (2..10).map(|n| format!(" jakiTok_VAR0{n}")).collect::<String>(),
-            )
+"#)
 
         } else if full_name.eq("koTok") {
+            let vars = (2..10)
+                .map(|n| format!(" koTok_VAR0{n}"))
+                .collect::<String>();
             format!(
 r#"AlternateSubs2: "'rand' RAND VARIATIONS"{vars}
-"#,             vars = (2..10).map(|n| format!(" koTok_VAR0{n}")).collect::<String>(),
-            )
+"#)
+
         } else { String::new() }; // end let rand
 
         format!("{latin_ligs}{rand}")
@@ -653,47 +665,70 @@ pub enum Cc {
 impl Cc {
     pub fn gen(&self, full_name: String) -> String {
         match self {
+
             Cc::Full => format!(
 r#"MultipleSubs2: "'cc01' CART" {full_name} combCartExtTok
 MultipleSubs2: "'cc02' CONT" {full_name} combContExtTok
 "#),
-            
-            Cc::Half => if full_name.eq("comma") {
+
+
+            Cc::Half =>
+                if full_name.eq("comma") {
 r#"MultipleSubs2: "'cc01' CART" combCartExt1TickTok
 MultipleSubs2: "'cc02' CONT" combContExtHalfTok
 "#.to_string()
 
-            } else if full_name.eq("quotesingle") {
-r#"MultipleSubs2: "'cc01' CART" combCartExt5TickTok
+                } else if full_name.eq("quotesingle") {
+r#"MultipleSubs2: "'cc01' CART" combCartExt1TopTickTok
 MultipleSubs2: "'cc02' CONT" combContExtHalfTok
 "#.to_string()
 
-            } else {
-                let sqsh = if full_name.eq("space") {
-r#"Position2: "'sqsh' SPACE SHIFT" dx=0 dy=0 dh=-500 dv=0
-"#              } else { "" };
+                } else if full_name.eq("quotedbl") {
+r#"MultipleSubs2: "'cc01' CART" dakuten combCartExtHalfTok
+MultipleSubs2: "'cc02' CONT" combContExtHalfTok
+"#.to_string()
 
-                format!(
-r#"{sqsh}MultipleSubs2: "'cc01' CART" {full_name} combCartExtHalfTok
+                } else if full_name.eq("asterisk") {
+r#"MultipleSubs2: "'cc01' CART" handakuten combCartExtHalfTok
+MultipleSubs2: "'cc02' CONT" combContExtHalfTok
+"#.to_string()
+
+                } else { format!(
+r#"MultipleSubs2: "'cc01' CART" {full_name} combCartExtHalfTok
 MultipleSubs2: "'cc02' CONT" {full_name} combContExtHalfTok
+"#)},
+
+            Cc::Participant =>
+                if full_name.contains("Tick") {
+                    let top = if full_name.contains("Top") {
+                        "Top"
+                    } else { "" };
+                    let num = full_name
+                        .chars()
+                        .nth(11)
+                        .expect("expect there to be an 11th char")
+                        .to_string()
+                        .parse()
+                        .expect("expect tick glyph to specify how many ticks");
+                    let repeat = format!("combCartExt1{top}TickTok ").repeat(num);
+                    let repeat_trim = repeat.trim_end();
+                    let cleanup = if num > 1 {
+                        format!("\nLigature2: \"'liga' CC CLEANUP\" {repeat_trim}")
+                    } else { String::new() };
+
+                    format!(
+r#"MultipleSubs2: "'cc01' CART" {full_name} combCartExtNoneTok{cleanup}
 "#)
-            },
-            
-            Cc::Participant => if full_name.contains("Tick") {
-                format!(
-r#"MultipleSubs2: "'cc01' CART" {full_name} combCartExtNoneTok
-"#)
-            } else if full_name.contains("dakuten") {
-                format!(
+
+                } else if full_name.contains("dakuten") { format!(
 r#"MultipleSubs2: "'cc01' CART" {full_name} combCartExtHalfTok
 "#)
-            } else {
-                format!(
+
+                } else { format!(
 r#"MultipleSubs2: "'cc01' CART" {full_name} combCartExtNoneTok
 MultipleSubs2: "'cc02' CONT" {full_name} combContExtNoneTok
-"#)
-            },
-            
+"#)},
+
             Cc::None => String::new(),
         }
     }
@@ -759,18 +794,29 @@ impl<'a> GlyphFull<'a> {
         let name = &self.glyph.name;
         let encoding = self.encoding.gen();
         let color = format!("Colour: {color}");
-        if name.contains("empty") {
-            return format!(
-                "\nStartChar: {name}\n{encoding}\nWidth: 0\nLayerCount: 2\n{color}\nEndChar\n"
-            );
-        }
+
+        if name.contains("empty") { return format!(
+r#"
+StartChar: {name}
+{encoding}
+Width: 0
+LayerCount: 2
+{color}
+EndChar
+"#); }
+
         let full_name = format!("{}{}{}", prefix, name, suffix);
+
         let width = self.glyph.width;
+
         let representation = self.glyph.rep.gen();
+
         let lookups = self
             .lookups
             .gen(name.to_string(), full_name.clone(), variation);
+
         let cc_subs = self.cc_subs.gen(full_name.clone());
+
         let flags = if full_name.eq("ZWSP")
             || full_name.eq("ZWNJ")
             || full_name.eq("ZWJ")
@@ -784,12 +830,18 @@ impl<'a> GlyphFull<'a> {
             || full_name.ends_with("Rad")
         {
             "Flags: W\n"
-        } else {
-            ""
-        };
+        } else { "" };
+
         let anchor = if let Some(anchor) = &self.glyph.anchor { anchor.gen() } else { String::new() };
         let anchor2 = if let Some(anchor2) = &self.glyph.anchor2 { anchor2.gen() } else { String::new() };
-        format!("\nStartChar: {full_name}\n{encoding}\nWidth: {width}\n{flags}{anchor2}{anchor}LayerCount: 2\n{representation}{lookups}{cc_subs}{color}\nEndChar\n")
+        format!(r#"
+StartChar: {full_name}
+{encoding}
+Width: {width}
+{flags}{anchor2}{anchor}LayerCount: 2
+{representation}{lookups}{cc_subs}{color}
+EndChar
+"#)
     }
 }
 

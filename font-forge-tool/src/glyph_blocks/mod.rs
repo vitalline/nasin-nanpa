@@ -15,7 +15,7 @@ Weight: Regular
 Copyright: jan Itan li mama. jan mute a li pona e pali ona.
 "#;
 
-pub const VERSION: &str = "5.0.0-beta.5";
+pub const VERSION: &str = "5.0.0-beta.4";
 
 pub const DETAILS1: &str = r#"ItalicAngle: 0
 UnderlinePosition: 0
@@ -74,6 +74,7 @@ OS2UnicodeRanges: 0000000f.00000000.00000000.00000000
 "#;
 
 pub const LOOKUPS: &str = r#"Lookup: 4 0 0 "'liga' SPACE" { "'liga' SPACE"  } ['liga' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
+Lookup: 4 0 0 "'half' RESTORE SPACE" { "'half' RESTORE SPACE"  } ['half' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
 Lookup: 4 0 0 "'liga' WORDS" { "'liga' WORD"  } ['liga' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
 Lookup: 3 0 0 "'rand' RAND VARIATIONS" { "'rand' RAND VARIATIONS"  } ['rand' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
 Lookup: 4 0 0 "'liga' VARIATIONS" { "'liga' VAR"  } ['liga' ('DFLT' <'dflt' 'latn' > 'latn' <'dflt' > ) ]
